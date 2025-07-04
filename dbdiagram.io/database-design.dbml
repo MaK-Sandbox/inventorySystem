@@ -33,7 +33,7 @@ Table users {
   id integer [primary key]
   name varchar [not null]
   email varchar [not null, unique]
-  role varchar [not null, ref: - roles.role]
+  role varchar [not null, ref: - roles.id]
 }
 
 Table roles {
