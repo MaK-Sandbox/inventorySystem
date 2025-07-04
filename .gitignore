@@ -1,6 +1,8 @@
 # Created by https://www.toptal.com/developers/gitignore/api/node,macos,windows,linux,android
 # Edit at https://www.toptal.com/developers/gitignore?templates=node,macos,windows,linux,android
 
+*.sqlite
+
 ### Android ###
 # Gradle files
 .gradle/
