@@ -3,8 +3,8 @@
 
 Table items {
   id integer [primary key]
-  name varchar
-  quantity integer
+  name varchar [not null]
+  quantity integer [not null]
   location_id integer [ref: > locations.id]
   purchase_price integer
   purchase_date timestamp
@@ -14,15 +14,14 @@ Table items {
 
 Table locations {
   id integer [primary key]
-  name varchar
+  name varchar [not null]
   parent_id integer [ref: - locations.id]
   description varchar
 }
 
 Table tags {
   id integer [primary key]
-  name varchar
-  specs varchar
+  name varchar [not null]
 }
 
 Table item_tags {
@@ -32,19 +31,19 @@ Table item_tags {
 
 Table users {
   id integer [primary key]
-  name varchar 
-  email varchar
-  role varchar [ref: - roles.role]
+  name varchar [not null]
+  email varchar [not null, unique]
+  role varchar [not null, ref: - roles.role]
 }
 
 Table roles {
   id integer [primary key]
-  role varchar
+  role varchar [not null]
 }
 
 Table sessions {
   id integer [primary key]
-  token varchar
-  expires_at timestamp
+  token varchar [not null]
+  expires_at timestamp [not null]
   user_id integer [ref: - users.id]
 }
