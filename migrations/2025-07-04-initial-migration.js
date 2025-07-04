@@ -14,7 +14,7 @@ db.pragma("foreign_keys = ON");
 if (process.env.DEV_MODE) {
   console.log("Creating tables");
 }
-db.exec(`
+db.exec(/* sql */ `
       CREATE TABLE IF NOT EXISTS locations (
       id INTEGER PRIMARY KEY,
       name TEXT NOT NULL,

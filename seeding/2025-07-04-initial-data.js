@@ -11,7 +11,7 @@ if (process.env.DEV_MODE) {
   console.log("Seeding tables");
 }
 
-db.exec(`
+db.exec(/* sql */ `
 -- Insert roles
 INSERT INTO roles (id, role) VALUES
   (1, 'admin'),
