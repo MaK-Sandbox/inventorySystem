@@ -1,0 +1,50 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table items {
+  id integer [primary key]
+  name varchar
+  quantity integer
+  location_id integer [ref: > locations.id]
+  purchase_price integer
+  purchase_date timestamp
+  receipt blob
+  freeText varchar
+}
+
+Table locations {
+  id integer [primary key]
+  name varchar
+  parent_id integer [ref: - locations.id]
+  description varchar
+}
+
+Table tags {
+  id integer [primary key]
+  name varchar
+  specs varchar
+}
+
+Table item_tags {
+  item_id integer [primary key, ref: - items.id]
+  tag_id integer [primary key, ref: - tags.id]
+}
+
+Table users {
+  id integer [primary key]
+  name varchar 
+  email varchar
+  role varchar [ref: - roles.role]
+}
+
+Table roles {
+  id integer [primary key]
+  role varchar
+}
+
+Table sessions {
+  id integer [primary key]
+  token varchar
+  expires_at timestamp
+  user_id integer [ref: - users.id]
+}
