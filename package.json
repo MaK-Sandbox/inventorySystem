@@ -4,7 +4,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "migration": "node --env-file=.env  migrations/2025-07-04-initial-migration.js",
+    "seed": "node --env-file=.env  seeding/2025-07-04-initial-data.js"
   },
   "repository": {
     "type": "git",
