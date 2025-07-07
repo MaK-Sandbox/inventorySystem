@@ -58,16 +58,30 @@ router.post("/", (req, res) => {
 router.put("/:id", (req, res) => {
   const id = req.params.id;
 
-  if (!req.body) {
+  if (Object.keys(req.body).length === 0) {
     res.status(400).send("Provide a body to put request");
     return;
   }
+
+  const allowedProperties = [
+    "id",
+    "name",
+    "quantity",
+    "location_id",
+    "purchase_price",
+    "purchase_date",
+    "receipt",
+    "freeText",
+  ];
 
   for (const key in req.body) {
     if (Object.prototype.hasOwnProperty.call(req.body, key)) {
       const element = req.body[key];
 
-      // console.log(key, element);
+      if (!allowedProperties.includes(key)) {
+        res.status(400).send("Illegal property");
+        return;
+      }
 
       const updateStatement = db.prepare(
         `UPDATE items SET ${key} = ? WHERE id = ?`

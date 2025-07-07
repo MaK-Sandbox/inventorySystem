@@ -25,7 +25,7 @@ PUT http://localhost:3000/api/v1/items/3 HTTP/1.1
 Content-Type: application/json
 
 {
-  "receipt": "89504E470D0A1A0A"
+  "brand": "Apple"
 }
 
 ###
