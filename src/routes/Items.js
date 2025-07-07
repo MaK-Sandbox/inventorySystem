@@ -16,6 +16,13 @@ router.get("/:id", (req, res) => {
   const stmt = db.prepare("SELECT * FROM items WHERE id = ?");
   const item = stmt.get(id);
 
+  if (!item) {
+    res
+      .status(400)
+      .send("An item with the provided id does not exist in the database");
+    return;
+  }
+
   res.send(item);
 });
 
@@ -91,6 +98,12 @@ router.put("/:id", (req, res) => {
   }
 
   res.json(db.prepare("SELECT * FROM items WHERE id = ?").get(id));
+});
+
+router.delete("/:id", (req, res) => {
+  const id = req.params.id;
+
+  res.send(id);
 });
 
 export default router;
