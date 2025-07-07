@@ -55,4 +55,17 @@ router.post("/", (req, res) => {
   res.json(db.prepare("SELECT * FROM items WHERE id = ?").get(newEmployeeId));
 });
 
+router.put("/:id", (req, res) => {
+  const id = req.params.id;
+  const receipt = req.body["receipt"];
+
+  const updateStatement = db.prepare(
+    "UPDATE items SET receipt = ? WHERE id = ?"
+  );
+
+  updateStatement.run(receipt, id);
+
+  res.json(db.prepare("SELECT * FROM items WHERE id = ?").get(id));
+});
+
 export default router;
