@@ -57,13 +57,24 @@ router.post("/", (req, res) => {
 
 router.put("/:id", (req, res) => {
   const id = req.params.id;
-  const receipt = req.body["receipt"];
 
-  const updateStatement = db.prepare(
-    "UPDATE items SET receipt = ? WHERE id = ?"
-  );
+  if (!req.body) {
+    res.status(400).send("Provide a body to put request");
+    return;
+  }
 
-  updateStatement.run(receipt, id);
+  for (const key in req.body) {
+    if (Object.prototype.hasOwnProperty.call(req.body, key)) {
+      const element = req.body[key];
+
+      // console.log(key, element);
+
+      const updateStatement = db.prepare(
+        `UPDATE items SET ${key} = ? WHERE id = ?`
+      );
+      updateStatement.run(element, id);
+    }
+  }
 
   res.json(db.prepare("SELECT * FROM items WHERE id = ?").get(id));
 });
