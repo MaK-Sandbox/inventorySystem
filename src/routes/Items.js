@@ -19,4 +19,34 @@ router.get("/:id", (req, res) => {
   res.send(item);
 });
 
+router.post("/", (req, res) => {
+  const name = req.body["name"];
+  const quantity = req.body["quantity"];
+  const locationId = req.body["location_id"];
+  const purchasePrice = req.body["purchase_price"];
+  const purchaseDate = req.body["purchase_date"];
+  const receipt = req.body["receipt"];
+  const freeText = req.body["freeText"];
+
+  const insertStatement = db.prepare(
+    "INSERT INTO items (name, quantity, location_id, purchase_price, purchase_date, receipt, freeText) VALUES (?, ?, ?, ?, ?, ?, ?)"
+  );
+
+  const info = insertStatement.run(
+    name,
+    quantity,
+    locationId,
+    purchasePrice,
+    purchaseDate,
+    receipt,
+    freeText
+  );
+
+  // Assuming that the creation was successful, store the id of the lastest inserted row
+  const newEmployeeId = info.lastInsertRowid;
+
+  // Return the newly created item
+  res.json(db.prepare("SELECT * FROM items WHERE id = ?").get(newEmployeeId));
+});
+
 export default router;

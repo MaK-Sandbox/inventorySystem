@@ -4,6 +4,9 @@ import express from "express";
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Use JSON middleware
+app.use(express.json());
+
 // Import and initialize routers
 import itemsRouter from "./routes/Items.js";
 
