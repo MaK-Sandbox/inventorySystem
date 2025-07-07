@@ -29,8 +29,8 @@ INSERT INTO locations (id, name, parent_id, description) VALUES
 
 -- Insert items
 INSERT INTO items (id, name, quantity, location_id, purchase_price, purchase_date, receipt, freeText) VALUES
-  (1, 'Laptop', 5, 2, 1200, '2024-05-15 10:00:00', X'89504E470D0A1A0A', 'Office equipment'),
-  (2, 'Monitor', 3, 2, 300, '2024-06-01 12:30:00', X'89504E470D0A1A0A', 'Office display'),
+  (1, 'Laptop', 5, 2, 1200, '2024-05-15 10:00:00', '89504E470D0A1A0A', 'Office equipment'),
+  (2, 'Monitor', 3, 2, 300, '2024-06-01 12:30:00', '89504E470D0A1A0A', 'Office display'),
   (3, 'Keyboard', 10, 2, 50, '2024-06-10 09:00:00', NULL, 'Input device');
 
 -- Insert tags
