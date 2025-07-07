@@ -43,6 +43,12 @@ router.post("/", (req, res) => {
   );
 
   // Assuming that the creation was successful, store the id of the lastest inserted row
+
+  if (info.changes === 0) {
+    res.send(403).send("Forbidden");
+    return;
+  }
+
   const newEmployeeId = info.lastInsertRowid;
 
   // Return the newly created item
