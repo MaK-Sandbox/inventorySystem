@@ -13,9 +13,10 @@ router.get("/", (req, res) => {
 router.get("/:id", (req, res) => {
   const id = req.params["id"];
 
-  const stmt = db.prepare("SELECT * FROM items WHERE id = ?");
-  const item = stmt.get(id);
+  // Step 1: Check if an item with the given id even exists in the database
+  const item = db.prepare("SELECT * FROM items WHERE id = ?").get(id);
 
+  // If such item does not exist, return an error message back to the user
   if (!item) {
     res
       .status(400)
@@ -65,13 +66,25 @@ router.post("/", (req, res) => {
 router.put("/:id", (req, res) => {
   const id = req.params.id;
 
+  // Step 1: Check if an item with the given id even exists in the database
+  const item = db.prepare("SELECT * FROM items WHERE id = ?").get(id);
+
+  // If such item does not exist, return an error message back to the user
+  if (!item) {
+    res
+      .status(400)
+      .send("An item with the provided id does not exist in the database");
+    return;
+  }
+
+  // Step 2: Check if a request body was provided. If not, return an error message back to the user
   if (Object.keys(req.body).length === 0) {
     res.status(400).send("Provide a body to put request");
     return;
   }
 
+  // Step 3: Ensure that only allowed properties are processed
   const allowedProperties = [
-    "id",
     "name",
     "quantity",
     "location_id",
@@ -85,6 +98,7 @@ router.put("/:id", (req, res) => {
     if (Object.prototype.hasOwnProperty.call(req.body, key)) {
       const element = req.body[key];
 
+      // If an illegal property is detected, return an error message to the user
       if (!allowedProperties.includes(key)) {
         res.status(400).send("Illegal property");
         return;
@@ -103,7 +117,21 @@ router.put("/:id", (req, res) => {
 router.delete("/:id", (req, res) => {
   const id = req.params.id;
 
-  res.send(id);
+  // Step 1: Check if an item with the given id even exists in the database
+  const item = db.prepare("SELECT * FROM items WHERE id = ?").get(id);
+
+  // If such item does not exist, return an error message back to the user
+  if (!item) {
+    res
+      .status(400)
+      .send("An item with the provided id does not exist in the database");
+    return;
+  }
+
+  // Step 2: If item does exist, delete the item from the database
+  db.prepare("DELETE FROM items WHERE id = ?").run(id);
+
+  res.status(200).json(item);
 });
 
 export default router;
