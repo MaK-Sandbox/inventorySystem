@@ -5,11 +5,14 @@ import db from "./db.js";
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Import and initialize routers
+import itemsRouter from "./routes/Items.js";
+
+// Use imported routers
+app.use("/api/v1/items", itemsRouter);
+
 app.get("/", (req, res) => {
-  const stmt = db.prepare("SELECT * FROM items");
-  const info = stmt.all();
-  console.log(info);
-  res.send(info);
+  res.send("Test route");
 });
 
 app.listen(port, () => {
