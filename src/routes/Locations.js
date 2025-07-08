@@ -26,33 +26,28 @@ router.get("/:id", (req, res) => {
 });
 
 router.post("/", (req, res) => {
-  // const name = req.body["name"];
-  // const quantity = req.body["quantity"];
-  // const locationId = req.body["location_id"];
-  // const purchasePrice = req.body["purchase_price"];
-  // const purchaseDate = req.body["purchase_date"];
-  // const receipt = req.body["receipt"];
-  // const freeText = req.body["freeText"];
-  // const insertStatement = db.prepare(
-  //   "INSERT INTO items (name, quantity, location_id, purchase_price, purchase_date, receipt, freeText) VALUES (?, ?, ?, ?, ?, ?, ?)"
-  // );
-  // const info = insertStatement.run(
-  //   name,
-  //   quantity,
-  //   locationId,
-  //   purchasePrice,
-  //   purchaseDate,
-  //   receipt,
-  //   freeText
-  // );
-  // // Assuming that the creation was successful, store the id of the lastest inserted row
-  // if (info.changes === 0) {
-  //   res.send(403).send("Forbidden");
-  //   return;
-  // }
-  // const newEmployeeId = info.lastInsertRowid;
-  // // Return the newly created item
-  // res.json(db.prepare("SELECT * FROM items WHERE id = ?").get(newEmployeeId));
+  const name = req.body["name"];
+  const parentId = req.body["parent_id"];
+  const description = req.body["description"];
+
+  const insertStatement = db.prepare(
+    "INSERT INTO locations (name, parent_id, description) VALUES (?, ?, ?)"
+  );
+
+  const info = insertStatement.run(name, parentId, description);
+
+  // Assuming that the creation was successful, store the id of the lastest inserted row
+  if (info.changes === 0) {
+    res.send(403).send("Forbidden");
+    return;
+  }
+
+  const newLocationId = info.lastInsertRowid;
+
+  // Return the newly created item
+  res.json(
+    db.prepare("SELECT * FROM locations WHERE id = ?").get(newLocationId)
+  );
 });
 
 router.put("/:id", (req, res) => {

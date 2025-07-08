@@ -5,3 +5,14 @@ GET http://localhost:3000/api/v1/locations
 GET http://localhost:3000/api/v1/locations/9
 
 ###
+
+POST http://localhost:3000/api/v1/locations HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Shelf C",
+  "parent_id": 5,
+  "description": "Third shelf in storage room"
+}
+
+###
