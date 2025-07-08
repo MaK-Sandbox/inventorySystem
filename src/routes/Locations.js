@@ -51,46 +51,45 @@ router.post("/", (req, res) => {
 });
 
 router.put("/:id", (req, res) => {
-  // const id = req.params.id;
-  // // Step 1: Check if an item with the given id even exists in the database
-  // const item = db.prepare("SELECT * FROM items WHERE id = ?").get(id);
-  // // If such item does not exist, return an error message back to the user
-  // if (!item) {
-  //   res
-  //     .status(400)
-  //     .send("An item with the provided id does not exist in the database");
-  //   return;
-  // }
-  // // Step 2: Check if a request body was provided. If not, return an error message back to the user
-  // if (Object.keys(req.body).length === 0) {
-  //   res.status(400).send("Provide a body to put request");
-  //   return;
-  // }
-  // // Step 3: Ensure that only allowed properties are processed
-  // const allowedProperties = [
-  //   "name",
-  //   "quantity",
-  //   "location_id",
-  //   "purchase_price",
-  //   "purchase_date",
-  //   "receipt",
-  //   "freeText",
-  // ];
-  // for (const key in req.body) {
-  //   if (Object.prototype.hasOwnProperty.call(req.body, key)) {
-  //     const element = req.body[key];
-  //     // If an illegal property is detected, return an error message to the user
-  //     if (!allowedProperties.includes(key)) {
-  //       res.status(400).send("Illegal property");
-  //       return;
-  //     }
-  //     const updateStatement = db.prepare(
-  //       `UPDATE items SET ${key} = ? WHERE id = ?`
-  //     );
-  //     updateStatement.run(element, id);
-  //   }
-  // }
-  // res.json(db.prepare("SELECT * FROM items WHERE id = ?").get(id));
+  const id = req.params.id;
+
+  // Step 1: Check if a location with the given id even exists in the database
+  const location = db.prepare("SELECT * FROM locations WHERE id = ?").get(id);
+
+  // If such location does not exist, return an error message back to the user
+  if (!location) {
+    res
+      .status(400)
+      .send("A location with the provided id does not exist in the database");
+    return;
+  }
+
+  // Step 2: Check if a request body was provided. If not, return an error message back to the user
+  if (Object.keys(req.body).length === 0) {
+    res.status(400).send("Provide a body to put request");
+    return;
+  }
+
+  // Step 3: Ensure that only allowed properties are processed
+  const allowedProperties = ["name", "parent_id", "description"];
+
+  for (const key in req.body) {
+    if (Object.prototype.hasOwnProperty.call(req.body, key)) {
+      const element = req.body[key];
+
+      // If an illegal property is detected, return an error message to the user
+      if (!allowedProperties.includes(key)) {
+        res.status(400).send("Illegal property");
+        return;
+      }
+
+      const updateStatement = db.prepare(
+        `UPDATE locations SET ${key} = ? WHERE id = ?`
+      );
+      updateStatement.run(element, id);
+    }
+  }
+  res.json(db.prepare("SELECT * FROM locations WHERE id = ?").get(id));
 });
 
 router.delete("/:id", (req, res) => {

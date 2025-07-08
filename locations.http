@@ -2,7 +2,7 @@ GET http://localhost:3000/api/v1/locations
 
 ###
 
-GET http://localhost:3000/api/v1/locations/9
+GET http://localhost:3000/api/v1/locations/11
 
 ###
 
@@ -16,3 +16,11 @@ Content-Type: application/json
 }
 
 ###
+
+PUT http://localhost:3000/api/v1/locations/11 HTTP/1.1
+Content-Type: application/json
+
+{
+  "description": "Third shelf in storage room, to the left"
+}
+
