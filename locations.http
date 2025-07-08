@@ -12,7 +12,7 @@ Content-Type: application/json
 {
   "name": "Shelf C",
   "parent_id": 5,
-  "description": "Third shelf in storage room"
+  "descriptions": "Third shelf in storage room"
 }
 
 ###

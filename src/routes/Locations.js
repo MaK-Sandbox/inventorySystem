@@ -26,15 +26,39 @@ router.get("/:id", (req, res) => {
 });
 
 router.post("/", (req, res) => {
-  const name = req.body["name"];
-  const parentId = req.body["parent_id"];
-  const description = req.body["description"];
+  // Validate properties
+  const allowedProperties = ["name", "parent_id", "description"];
+
+  // Step 1: Check if a request body was provided. If not, return an error message back to the user
+  if (Object.keys(req.body).length === 0) {
+    res.status(400).send("Provide a body to put request");
+    return;
+  }
+
+  // Step 2: Validate and filter properties
+  const insertData = {};
+  for (const key in req.body) {
+    if (Object.prototype.hasOwnProperty.call(req.body, key)) {
+      const value = req.body[key];
+
+      // If an illegal property is detected, return an error message to the user
+      if (!allowedProperties.includes(key)) {
+        res.status(400).send("Illegal property");
+        return;
+      }
+      insertData[key] = value;
+    }
+  }
+
+  // Step 3: Use properties of validated entries and values
+  const validatedProperties = Object.keys(insertData);
+  const validatedValues = Object.values(insertData);
 
   const insertStatement = db.prepare(
-    "INSERT INTO locations (name, parent_id, description) VALUES (?, ?, ?)"
+    `INSERT INTO locations (${validatedProperties.join(", ")}) VALUES (?, ?, ?)`
   );
 
-  const info = insertStatement.run(name, parentId, description);
+  const info = insertStatement.run(...validatedValues);
 
   // Assuming that the creation was successful, store the id of the lastest inserted row
   if (info.changes === 0) {
