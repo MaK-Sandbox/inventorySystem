@@ -93,19 +93,23 @@ router.put("/:id", (req, res) => {
 });
 
 router.delete("/:id", (req, res) => {
-  // const id = req.params.id;
-  // // Step 1: Check if an item with the given id even exists in the database
-  // const item = db.prepare("SELECT * FROM items WHERE id = ?").get(id);
-  // // If such item does not exist, return an error message back to the user
-  // if (!item) {
-  //   res
-  //     .status(400)
-  //     .send("An item with the provided id does not exist in the database");
-  //   return;
-  // }
-  // // Step 2: If item does exist, delete the item from the database
-  // db.prepare("DELETE FROM items WHERE id = ?").run(id);
-  // res.status(200).json(item);
+  const id = req.params.id;
+
+  // Step 1: Check if an location with the given id even exists in the database
+  const location = db.prepare("SELECT * FROM locations WHERE id = ?").get(id);
+
+  // If such location does not exist, return an error message back to the user
+  if (!location) {
+    res
+      .status(400)
+      .send("A location with the provided id does not exist in the database");
+    return;
+  }
+
+  // Step 2: If such location does exist, delete the locaion from the database
+  db.prepare("DELETE FROM locations WHERE id = ?").run(id);
+
+  res.status(200).json(location);
 });
 
 export default router;
