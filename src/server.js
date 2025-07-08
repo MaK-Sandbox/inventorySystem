@@ -9,9 +9,11 @@ app.use(express.json());
 
 // Import and initialize routers
 import itemsRouter from "./routes/Items.js";
+import locationsRouter from "./routes/Locations.js";
 
 // Use imported routers
 app.use("/api/v1/items", itemsRouter);
+app.use("/api/v1/locations", locationsRouter);
 
 app.get("/", (req, res) => {
   res.send("Test route");

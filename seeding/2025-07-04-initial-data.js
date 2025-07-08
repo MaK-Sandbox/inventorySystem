@@ -24,8 +24,16 @@ INSERT INTO users (id, name, email, role) VALUES
 
 -- Insert locations
 INSERT INTO locations (id, name, parent_id, description) VALUES
-  (1, 'Warehouse', NULL, 'Main warehouse'),
-  (2, 'Shelf A', 1, 'First shelf in warehouse');
+  (1, 'Denmark', NULL, 'Padborg'),
+  (2, 'Germany', NULL, 'Düsseldorf'),
+  (3, 'Apartment', 1, 'Stored in apartment'),
+  (4, 'Apartment', 2, 'Stored in apartment'),
+  (5, 'Storage room', 2, 'Stored in Annes storage room'),
+  (6, 'Shoe box A1', 3, 'Stored in the bedroom'),
+  (7, 'Shoe box A1', 4, 'Stored in the office'),
+  (8, 'Shoe box B1', 4, 'Stored in the office'),
+  (9, 'Shelf A', 5, 'First shelf in storage room'),
+  (10, 'Shelf B', 5, 'Second shelf in storage room');
 
 -- Insert items
 INSERT INTO items (id, name, quantity, location_id, purchase_price, purchase_date, receipt, freeText) VALUES
