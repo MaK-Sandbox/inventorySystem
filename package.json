@@ -4,6 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "migration-01": "node --env-file=.env  migrations/2025-07-09-migration.js",
     "migration": "node --env-file=.env  migrations/2025-07-04-initial-migration.js",
     "seed": "node --env-file=.env  seeding/2025-07-04-initial-data.js"
   },
