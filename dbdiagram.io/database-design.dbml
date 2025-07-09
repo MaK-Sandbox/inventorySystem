@@ -7,8 +7,8 @@ Table items {
   quantity integer [not null]
   location_id integer [ref: > locations.id]
   purchase_price integer
+  currency_id integer [not null, ref: > currencies.id]
   purchase_date timestamp
-  receipt blob
   freeText varchar
 }
 
@@ -46,4 +46,26 @@ Table sessions {
   token varchar [not null]
   expires_at timestamp [not null]
   user_id integer [ref: - users.id]
+}
+
+Table documents {
+  id integer [primary key]
+  item_id integer [not null, ref: > items.id]
+  path varchar [not null]
+  description varchar
+}
+
+Table urls {
+  id integer [primary key]
+  item_id integer [not null, ref: > items.id]
+  url varchar [not null]
+  description varchar
+}
+
+Table currencies {
+  id integer [primary key]
+  name varchar [default: 'Euro']
+  decimal_position integer [default: 2]
+  iso_4217_code varchar [default: 'EUR', unique]
+  symbol varchar [default: '€']
 }
