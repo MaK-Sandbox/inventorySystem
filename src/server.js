@@ -6,6 +6,7 @@ const port = process.env.PORT || 3000;
 
 // Use JSON middleware
 app.use(express.json());
+app.use(express.static("public"));
 
 // Import and initialize routers
 import itemsRouter from "./routes/Items.js";
