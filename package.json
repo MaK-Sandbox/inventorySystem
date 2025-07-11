@@ -6,7 +6,7 @@
   "scripts": {
     "backup": "cp inventory.sqlite inventory_backup.sqlite",
     "migrate_all": "bash utils/migration.sh",
-    "seed": "node --env-file=.env  seeding/2025-07-04-initial-data.js",
+    "seed": "node --env-file=.env seeding/2025-07-11-data.js",
     "devStart": "nodemon --env-file=.env ./src/server.js"
   },
   "repository": {
