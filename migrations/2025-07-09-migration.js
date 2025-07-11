@@ -14,6 +14,8 @@ if (process.env.DEV_MODE) {
   console.log("Creating tables");
 }
 db.exec(/* sql */ `
+    BEGIN TRANSACTION;
+
     CREATE TABLE IF NOT EXISTS currencies (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT DEFAULT 'Euro',
@@ -24,8 +26,7 @@ db.exec(/* sql */ `
 
     INSERT INTO currencies (id, name, iso_4217_code, symbol) VALUES (1, 'Euro', 'EUR', '€');
 
-    PRAGMA foreign_keys=off;
-
+  
     -- === Step 1: Create new tables with temporary names ===
 
     -- items_new
@@ -81,11 +82,10 @@ db.exec(/* sql */ `
     SELECT item_id, tag_id FROM item_tags;
 
     -- === Step 3: Drop old tables ===
-
-    DROP TABLE items;
-    DROP TABLE locations;
-    DROP TABLE tags;
     DROP TABLE item_tags;
+    DROP TABLE items;
+    DROP TABLE tags;
+    DROP TABLE locations;
 
     -- === Step 4: Rename new tables to original names ===
 
@@ -94,7 +94,6 @@ db.exec(/* sql */ `
     ALTER TABLE tags_new RENAME TO tags;
     ALTER TABLE item_tags_new RENAME TO item_tags;
 
-    PRAGMA foreign_keys=on;
 
     CREATE TABLE IF NOT EXISTS documents (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -111,4 +110,8 @@ db.exec(/* sql */ `
       description TEXT,
       FOREIGN KEY (item_id) REFERENCES items(id)
     );
+
+    COMMIT;
+    
+
   `);
