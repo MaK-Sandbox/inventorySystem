@@ -2,7 +2,7 @@
 // Docs: https://dbml.dbdiagram.io/docs
 
 Table items {
-  id integer [primary key]
+  id integer [primary key, increment]
   name varchar [not null]
   quantity integer [not null]
   location_id integer [ref: > locations.id]
@@ -13,14 +13,14 @@ Table items {
 }
 
 Table locations {
-  id integer [primary key]
+  id integer [primary key, increment]
   name varchar [not null]
   parent_id integer [ref: - locations.id]
   description varchar
 }
 
 Table tags {
-  id integer [primary key]
+  id integer [primary key, increment]
   name varchar [not null]
 }
 
@@ -30,40 +30,40 @@ Table item_tags {
 }
 
 Table users {
-  id integer [primary key]
+  id integer [primary key, increment]
   name varchar [not null]
   email varchar [not null, unique]
   role varchar [not null, ref: - roles.id]
 }
 
 Table roles {
-  id integer [primary key]
+  id integer [primary key, increment]
   role varchar [not null]
 }
 
 Table sessions {
-  id integer [primary key]
+  id integer [primary key, increment]
   token varchar [not null]
   expires_at timestamp [not null]
   user_id integer [ref: - users.id]
 }
 
 Table documents {
-  id integer [primary key]
+  id integer [primary key, increment]
   item_id integer [not null, ref: > items.id]
   path varchar [not null]
   description varchar
 }
 
 Table urls {
-  id integer [primary key]
+  id integer [primary key, increment]
   item_id integer [not null, ref: > items.id]
   url varchar [not null]
   description varchar
 }
 
 Table currencies {
-  id integer [primary key]
+  id integer [primary key, increment]
   name varchar [default: 'Euro']
   decimal_position integer [default: 2]
   iso_4217_code varchar [default: 'EUR', unique]
