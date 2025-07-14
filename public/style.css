@@ -1,0 +1,7 @@
+#loaded-data-container {
+  grid-template-columns: repeat(8, auto);
+}
+
+#loaded-data-container > * {
+  text-align: center;
+}

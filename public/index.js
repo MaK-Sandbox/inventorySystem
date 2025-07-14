@@ -1,12 +1,39 @@
 const loadedDataContainer = document.getElementById("loaded-data-container");
+loadedDataContainer.style.display = "grid";
 
 document.addEventListener("DOMContentLoaded", occupyDataContainer);
 
-function occupyDataContainer() {
-  const data = fetchCurrentInventory();
+async function occupyDataContainer() {
+  const items = await fetchCurrentInventory();
+  console.log("items", items);
 
   loadedDataContainer.innerHTML = "";
-  loadedDataContainer.textContent = data;
+
+  // firstly, we need the headers
+  for (const key in items[0]) {
+    if (Object.prototype.hasOwnProperty.call(items[0], key)) {
+      const header = document.createElement("div");
+      header.style.fontWeight = "bold";
+      header.textContent = key;
+      loadedDataContainer.appendChild(header);
+    }
+  }
+
+  // now let's get the data content
+  if (Array.isArray(items) && items.length > 0) {
+    items.map((item) => {
+      for (const key in item) {
+        if (Object.prototype.hasOwnProperty.call(item, key)) {
+          const element = item[key];
+
+          const newElement = document.createElement("div");
+          newElement.style.display = "inline-block";
+          newElement.textContent = element;
+          loadedDataContainer.appendChild(newElement);
+        }
+      }
+    });
+  }
 }
 
 async function fetchCurrentInventory() {
@@ -22,7 +49,7 @@ async function fetchCurrentInventory() {
     }
 
     const json = await response.json();
-    console.log("json", json);
+    return json;
   } catch (error) {
     console.error(error.message);
   }
