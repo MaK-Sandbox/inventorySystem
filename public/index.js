@@ -1,5 +1,4 @@
 const loadedDataContainer = document.getElementById("loaded-data-container");
-loadedDataContainer.style.display = "grid";
 
 document.addEventListener("DOMContentLoaded", occupyDataContainer);
 
@@ -13,7 +12,7 @@ async function occupyDataContainer() {
   for (const key in items[0]) {
     if (Object.prototype.hasOwnProperty.call(items[0], key)) {
       const header = document.createElement("div");
-      header.style.fontWeight = "bold";
+      header.classList.add("header");
       header.textContent = key;
       loadedDataContainer.appendChild(header);
     }
@@ -24,12 +23,11 @@ async function occupyDataContainer() {
     items.map((item) => {
       for (const key in item) {
         if (Object.prototype.hasOwnProperty.call(item, key)) {
-          const element = item[key];
+          const value = item[key];
 
-          const newElement = document.createElement("div");
-          newElement.style.display = "inline-block";
-          newElement.textContent = element;
-          loadedDataContainer.appendChild(newElement);
+          const itemInfo = document.createElement("div");
+          itemInfo.textContent = value;
+          loadedDataContainer.appendChild(itemInfo);
         }
       }
     });

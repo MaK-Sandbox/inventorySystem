@@ -1,7 +1,12 @@
 #loaded-data-container {
+  display: grid;
   grid-template-columns: repeat(8, auto);
 }
 
 #loaded-data-container > * {
   text-align: center;
+}
+
+.header {
+  font-weight: bold;
 }
