@@ -13,6 +13,7 @@ async function occupyDataContainer() {
     if (Object.prototype.hasOwnProperty.call(items[0], key)) {
       const header = document.createElement("div");
       header.classList.add("header");
+      header.setAttribute("id", `header-${key}`);
       header.textContent = key;
       loadedDataContainer.appendChild(header);
     }
@@ -26,6 +27,8 @@ async function occupyDataContainer() {
           const value = item[key];
 
           const itemInfo = document.createElement("div");
+          itemInfo.classList.add("item");
+          itemInfo.setAttribute("id", `${item["id"]}-${key}`);
           itemInfo.textContent = value;
           loadedDataContainer.appendChild(itemInfo);
         }
