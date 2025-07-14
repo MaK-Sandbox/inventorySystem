@@ -8,7 +8,7 @@
 
 #loaded-data-container {
   display: grid;
-  grid-template-columns: repeat(8, 11em);
+  grid-template-columns: repeat(8, auto) repeat(2, 4em);
 }
 
 #loaded-data-container > * {
