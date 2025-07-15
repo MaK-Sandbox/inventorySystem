@@ -62,6 +62,19 @@ function generateActionButton(itemId, buttonName, buttonIcon) {
   button.classList.add("actionButton");
   button.setAttribute("id", `${itemId}-${buttonName}`);
   button.textContent = `${buttonIcon}`;
+
+  // each action button should have an eventlistener for the event 'click'
+  button.addEventListener("click", () => {
+    if (buttonName === "editButton") {
+      console.log(`You clicked an ${buttonName}`);
+    }
+
+    if (buttonName === "deleteButton") {
+      console.log(`You clicked a ${buttonName}`);
+    }
+  });
+
+  // finally, append action button to the desired parent element
   loadedDataContainer.appendChild(button);
 }
 
