@@ -30,24 +30,30 @@ async function occupyDataContainer() {
   // now let's get the data content
   if (Array.isArray(items) && items.length > 0) {
     items.map((item) => {
-      for (const key in item) {
-        if (Object.prototype.hasOwnProperty.call(item, key)) {
-          const value = item[key];
+      // generate row data for each item and place them in the grid
+      generateItemRow(item);
 
-          // create a div element for each item info provided by the backend
-          const itemInfo = document.createElement("div");
-          itemInfo.classList.add("item");
-          itemInfo.setAttribute("id", `${item["id"]}-${key}`);
-          itemInfo.textContent = value;
-          loadedDataContainer.appendChild(itemInfo);
-        }
-      }
       // we also need to create the action buttons
       generateActionButton(item["id"], "editButton", "✏️");
 
       // we also need to create the action buttons
       generateActionButton(item["id"], "deleteButton", "❌");
     });
+  }
+}
+
+function generateItemRow(item) {
+  for (const key in item) {
+    if (Object.prototype.hasOwnProperty.call(item, key)) {
+      const value = item[key];
+
+      // create a div element for each item info provided by the backend
+      const itemInfo = document.createElement("div");
+      itemInfo.classList.add("item");
+      itemInfo.setAttribute("id", `${item["id"]}-${key}`);
+      itemInfo.textContent = value;
+      loadedDataContainer.appendChild(itemInfo);
+    }
   }
 }
 
