@@ -13,15 +13,71 @@ function generateButton(textContent) {
 
   const button = document.createElement("button");
   button.classList.add("button");
-  button.textContent = textContent;
+  button.innerText = textContent;
 
-  if ((textContent = "Add item ➕")) {
-    button.addEventListener("click", () => {
-      console.log("Add a new row to the grid!");
-    });
-  }
+  button.addEventListener("click", () => {
+    if (textContent === "Add item ➕") {
+      for (let i = 0; i < 8; i++) {
+        if (i === 0) {
+          const emptyDiv = document.createElement("div");
+          emptyDiv.classList.add("emptyDiv");
+          loadedDataContainer.appendChild(emptyDiv);
+        } else {
+          const emptyInput = document.createElement("input");
+          emptyInput.classList.add("emptyInput");
+          loadedDataContainer.appendChild(emptyInput);
+        }
+      }
+
+      generateButton("Save 💾");
+    }
+
+    if (textContent === "Save 💾") {
+      const allInput = [...document.querySelectorAll(".emptyInput")];
+
+      const obj = {
+        name: allInput[0].value,
+        quantity: allInput[1].value,
+        location_id: allInput[2].value,
+        purchase_price: allInput[3].value,
+        currency_id: allInput[4].value,
+        purchase_date: allInput[5].value,
+        freeText: allInput[6].value,
+      };
+
+      // send to backend via fetch
+      if (saveNewItem(obj)) {
+        renderGrid();
+        generateButton("Add item ➕");
+      }
+    }
+  });
 
   buttonContainer.appendChild(button);
+}
+
+async function saveNewItem(obj) {
+  const url = "http://127.0.0.1:3000/api/v1/items";
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(obj),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    const json = await response.json();
+    console.log(json);
+    return json;
+  } catch (error) {
+    console.error(error.message);
+  }
 }
 
 async function renderGrid() {

@@ -18,3 +18,7 @@
 .actionButton {
   font-style: normal;
 }
+
+input[type="number"] {
+  min: 0;
+}
