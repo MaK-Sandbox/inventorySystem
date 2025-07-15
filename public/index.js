@@ -43,20 +43,20 @@ async function occupyDataContainer() {
         }
       }
       // we also need to create the action buttons
-      const editButton = document.createElement("i");
-      editButton.classList.add("actionButton");
-      editButton.setAttribute("id", `${item["id"]}-editButton`);
-      editButton.textContent = "edit";
-      loadedDataContainer.appendChild(editButton);
+      generateActionButton(item["id"], "editButton", "✏️");
 
       // we also need to create the action buttons
-      const deleteButton = document.createElement("i");
-      deleteButton.classList.add("actionButton");
-      deleteButton.setAttribute("id", `${item["id"]}-deleteButton`);
-      deleteButton.textContent = "delete";
-      loadedDataContainer.appendChild(deleteButton);
+      generateActionButton(item["id"], "deleteButton", "❌");
     });
   }
+}
+
+function generateActionButton(itemId, buttonName, buttonIcon) {
+  const button = document.createElement("i");
+  button.classList.add("actionButton");
+  button.setAttribute("id", `${itemId}-${buttonName}`);
+  button.textContent = `${buttonIcon}`;
+  loadedDataContainer.appendChild(button);
 }
 
 async function fetchCurrentInventory() {

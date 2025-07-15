@@ -8,13 +8,13 @@
 
 #loaded-data-container {
   display: grid;
-  grid-template-columns: repeat(8, auto) repeat(2, 4em);
-}
-
-#loaded-data-container > * {
-  text-align: center;
+  grid-template-columns: repeat(8, auto) repeat(2, 2em);
 }
 
 .header {
   font-weight: bold;
+}
+
+.actionButton {
+  font-style: normal;
 }
