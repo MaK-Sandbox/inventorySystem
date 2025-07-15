@@ -1,8 +1,8 @@
 const loadedDataContainer = document.getElementById("loaded-data-container");
 
-document.addEventListener("DOMContentLoaded", occupyDataContainer);
+document.addEventListener("DOMContentLoaded", renderGrid);
 
-async function occupyDataContainer() {
+async function renderGrid() {
   const items = await fetchCurrentInventory();
   console.log("items", items);
 
