@@ -1,6 +1,28 @@
 const loadedDataContainer = document.getElementById("loaded-data-container");
+const buttonContainer = document.getElementById("btn-container");
 
-document.addEventListener("DOMContentLoaded", renderGrid);
+document.addEventListener("DOMContentLoaded", () => {
+  renderGrid();
+
+  generateButton("Add item ➕");
+});
+
+function generateButton(textContent) {
+  // create button
+  buttonContainer.innerHTML = "";
+
+  const button = document.createElement("button");
+  button.classList.add("button");
+  button.textContent = textContent;
+
+  if ((textContent = "Add item ➕")) {
+    button.addEventListener("click", () => {
+      console.log("Add a new row to the grid!");
+    });
+  }
+
+  buttonContainer.appendChild(button);
+}
 
 async function renderGrid() {
   const items = await fetchCurrentInventory();
