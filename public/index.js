@@ -9,8 +9,26 @@ async function occupyDataContainer() {
   loadedDataContainer.innerHTML = "";
 
   // firstly, we need the headers
-  for (const key in items[0]) {
-    if (Object.prototype.hasOwnProperty.call(items[0], key)) {
+  generateHeaders(items[0]);
+
+  // now let's get the data content
+  if (Array.isArray(items) && items.length > 0) {
+    items.map((item) => {
+      // generate row data for each item and place them in the grid
+      generateItemRow(item);
+
+      // we also need to create the action buttons
+      generateActionButton(item["id"], "editButton", "✏️");
+
+      // we also need to create the action buttons
+      generateActionButton(item["id"], "deleteButton", "❌");
+    });
+  }
+}
+
+function generateHeaders(item) {
+  for (const key in item) {
+    if (Object.prototype.hasOwnProperty.call(item, key)) {
       const header = document.createElement("div");
       header.classList.add("header");
       header.setAttribute("id", `header-${key}`);
@@ -25,20 +43,6 @@ async function occupyDataContainer() {
     emptyHeader.setAttribute("id", "emptyHeader");
     emptyHeader.textContent = "";
     loadedDataContainer.appendChild(emptyHeader);
-  }
-
-  // now let's get the data content
-  if (Array.isArray(items) && items.length > 0) {
-    items.map((item) => {
-      // generate row data for each item and place them in the grid
-      generateItemRow(item);
-
-      // we also need to create the action buttons
-      generateActionButton(item["id"], "editButton", "✏️");
-
-      // we also need to create the action buttons
-      generateActionButton(item["id"], "deleteButton", "❌");
-    });
   }
 }
 
