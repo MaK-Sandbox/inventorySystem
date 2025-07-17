@@ -86,11 +86,24 @@ async function renderGrid() {
 
   loadedDataContainer.innerHTML = "";
 
-  // firstly, we need the headers
-  generateHeaders(items[0]);
+  if (!items) {
+    generateHeaders({
+      id: 1,
+      name: "Desk chair",
+      quantity: 3,
+      location_id: 1,
+      purchase_price: 300,
+      currency_id: 1,
+      purchase_date: "2025-07-07 10:00:00",
+      freeText: "Office equipment",
+    });
+  }
 
   // now let's get the data content
   if (Array.isArray(items) && items.length > 0) {
+    // firstly, we need the headers
+    generateHeaders(items[0]);
+
     items.map((item) => {
       // generate row data for each item and place them in the grid
       generateItemRow(item);
