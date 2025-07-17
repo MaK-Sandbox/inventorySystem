@@ -1,11 +1,9 @@
 const loadedDataContainer = document.getElementById("loaded-data-container");
 const buttonContainer = document.getElementById("btn-container");
 
-document.addEventListener("DOMContentLoaded", () => {
-  renderGrid();
+renderGrid();
 
-  generateButton("Add item ➕");
-});
+generateButton("Add item ➕");
 
 function generateButton(textContent) {
   // create button
@@ -186,8 +184,9 @@ async function fetchCurrentInventory() {
     }
 
     const json = await response.json();
-    return json;
+    return json || [];
   } catch (error) {
-    console.error(error.message);
+    console.error("Network or parsing error:", error);
+    return null;
   }
 }
