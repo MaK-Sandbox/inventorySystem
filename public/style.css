@@ -7,6 +7,7 @@
 }
 
 body {
+  padding: 1em;
   font-family: sans-serif;
 }
 
@@ -22,14 +23,20 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
-#form {
+#form,
+#items-container {
   display: grid;
+}
+
+#form {
+  width: fit-content;
+  padding: 4em 2em;
+  background-color: rgb(154, 173, 225);
   grid-template-columns: 10em 20em;
   row-gap: 0.25em;
 }
 
 #items-container {
-  display: grid;
   grid-template-columns: repeat(8, auto);
 }
 
