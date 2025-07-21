@@ -23,17 +23,27 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
-#form,
-#items-container {
-  display: grid;
-}
-
 #form {
   width: fit-content;
   padding: 4em 2em;
   background-color: rgb(154, 173, 225);
+}
+
+#form-grid,
+#items-container {
+  display: grid;
+}
+
+#form-grid {
   grid-template-columns: 10em 20em;
   row-gap: 0.25em;
+}
+
+input[type="submit"] {
+  border: none;
+  padding: 0.5em 2em;
+  border-radius: 0.5rem;
+  background-color: blueviolet;
 }
 
 #items-container {
@@ -48,7 +58,7 @@ div[id^="header"] {
   border: 1px solid black;
 }
 
-div[id$="id"],
+div[id$="id"]:not(div[id="form-grid"]),
 div[id$="name"],
 div[id$="quantity"],
 div[id$="price"],
