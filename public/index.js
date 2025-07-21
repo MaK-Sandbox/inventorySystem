@@ -49,6 +49,9 @@ async function displayItems() {
   // generate headers
   const properties = Object.keys(items[0]);
   generateHeaders(properties);
+
+  // generate item rows
+  items.sort((a, b) => b.id - a.id).map((item) => generateGridRows(item));
 }
 
 function generateHeaders(properties) {
@@ -59,6 +62,20 @@ function generateHeaders(properties) {
     header.textContent = prop;
     itemsContainer.appendChild(header);
   });
+}
+
+function generateGridRows(item) {
+  for (const key in item) {
+    if (Object.prototype.hasOwnProperty.call(item, key)) {
+      const element = item[key];
+
+      let itemInfo = document.createElement("div");
+      itemInfo.classList.add("item-info");
+      itemInfo.setAttribute("id", `${item.id}-${key}`);
+      itemInfo.textContent = element;
+      itemsContainer.appendChild(itemInfo);
+    }
+  }
 }
 
 async function fetchCurrentItems() {
