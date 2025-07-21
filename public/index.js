@@ -1,4 +1,5 @@
 const form = document.getElementById("form");
+const itemsContainer = document.getElementById("items-container");
 
 document.addEventListener("DOMContentLoaded", displayItems);
 
@@ -39,8 +40,25 @@ form.addEventListener("submit", async (event) => {
 });
 
 async function displayItems() {
+  itemsContainer.innerHTML = "";
+
+  // fetch data that we want to display in x
   const items = await fetchCurrentItems();
   console.log("items", items);
+
+  // generate headers
+  const properties = Object.keys(items[0]);
+  generateHeaders(properties);
+}
+
+function generateHeaders(properties) {
+  properties.map((prop) => {
+    let header = document.createElement("div");
+    header.classList.add("header");
+    header.setAttribute("id", `header-${prop}`);
+    header.textContent = prop;
+    itemsContainer.appendChild(header);
+  });
 }
 
 async function fetchCurrentItems() {

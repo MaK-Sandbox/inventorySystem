@@ -23,3 +23,13 @@ input[type="number"] {
   grid-template-columns: 10em 20em;
   row-gap: 0.25em;
 }
+
+#items-container {
+  display: grid;
+  grid-template-columns: repeat(8, auto);
+  gap: 0.25em;
+}
+
+.header {
+  font-weight: bolder;
+}
