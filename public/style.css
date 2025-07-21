@@ -50,3 +50,7 @@ div[id$="freeText"] {
   border-left: 1px solid black;
   border-right: 1px solid black;
 }
+
+.bottom-item {
+  border-bottom: 1px solid black;
+}

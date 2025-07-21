@@ -93,6 +93,9 @@ function generateGridRows(item) {
 
       let itemInfo = document.createElement("div");
       itemInfo.classList.add("item-info");
+      if (item.id === 1) {
+        itemInfo.classList.add("bottom-item");
+      }
       itemInfo.setAttribute("id", `${item.id}-${key}`);
       itemInfo.textContent = element;
       itemsContainer.appendChild(itemInfo);
