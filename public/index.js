@@ -1,5 +1,9 @@
 const form = document.getElementById("form");
 const itemsContainer = document.getElementById("items-container");
+const purchaseDate = document.getElementById("purchase_date");
+
+// initialize purchase date
+initializePurchaseDate();
 
 document.addEventListener("DOMContentLoaded", displayItems);
 
@@ -38,6 +42,20 @@ form.addEventListener("submit", async (event) => {
 
   displayItems();
 });
+
+function initializePurchaseDate() {
+  const d = new Date();
+  let year = d.getFullYear();
+  let month = addZero(d.getMonth() + 1);
+  let date = addZero(d.getDate());
+  let hour = addZero(d.getHours());
+  purchaseDate.value = `${year}-${month}-${date} ${hour}:00:00`;
+}
+
+function addZero(i) {
+  if (i < 10) return `0${i}`;
+  return i;
+}
 
 async function displayItems() {
   itemsContainer.innerHTML = "";
