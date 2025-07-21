@@ -5,20 +5,3 @@
   margin: 0;
   padding: 0;
 }
-
-#loaded-data-container {
-  display: grid;
-  grid-template-columns: repeat(8, auto) repeat(2, 2em);
-}
-
-.header {
-  font-weight: bold;
-}
-
-.actionButton {
-  font-style: normal;
-}
-
-input[type="number"] {
-  min: 0;
-}
