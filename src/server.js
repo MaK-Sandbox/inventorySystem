@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 
 // Initialize Express app
 const app = express();
@@ -7,6 +8,7 @@ const port = process.env.PORT || 3000;
 // Use JSON middleware
 app.use(express.json());
 app.use(express.static("public"));
+app.use(cors());
 
 // Import and initialize routers
 import itemsRouter from "./routes/Items.js";
