@@ -2,6 +2,10 @@ const form = document.getElementById("form");
 const itemsContainer = document.getElementById("items-container");
 const purchaseDate = document.getElementById("purchase_date");
 
+// check if in devleopment
+const isDev = ["localhost", "127.0.0.1"].includes(window.location.hostname);
+const API_BASE_URL = isDev ? "http://localhost:3000" : "http://ser6pro:3000";
+
 // initialize purchase date
 initializePurchaseDate();
 
@@ -17,12 +21,12 @@ form.addEventListener("submit", async (event) => {
   const payload = JSON.stringify(dataObject);
   console.log(payload);
 
-  const url = "http://localhost:3000/api/v1/items";
+  const url = `${API_BASE_URL}/api/v1/items`;
   const options = {
     method: "post",
     headers: {
-      "Content-Type": "application/json",
-      "Access-Control-Allow-Origin": "http://127.0.0.1",
+      "Content-Type": "application/json; charset=utf-8",
+      "Access-Control-Allow-Origin": "*",
     },
     body: payload,
   };
@@ -97,7 +101,7 @@ function generateGridRows(item) {
 }
 
 async function fetchCurrentItems() {
-  const url = "http://localhost:3000/api/v1/items";
+  const url = `${API_BASE_URL}/api/v1/items`;
   const options = {
     headers: {
       "Content-Type": "application/json; charset=utf-8",
