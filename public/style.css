@@ -31,9 +31,22 @@ input[type="number"] {
 #items-container {
   display: grid;
   grid-template-columns: repeat(8, auto);
-  gap: 0.25em;
 }
 
 .header {
   font-weight: bolder;
+}
+
+div[id^="header"] {
+  border: 1px solid black;
+}
+
+div[id$="id"],
+div[id$="name"],
+div[id$="quantity"],
+div[id$="price"],
+div[id$="date"],
+div[id$="freeText"] {
+  border-left: 1px solid black;
+  border-right: 1px solid black;
 }
