@@ -1,9 +1,6 @@
 const form = document.getElementById("form");
 
-document.addEventListener("DOMContentLoaded", async () => {
-  const items = await fetchCurrentItems();
-  console.log("items", items);
-});
+document.addEventListener("DOMContentLoaded", displayItems);
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -38,9 +35,13 @@ form.addEventListener("submit", async (event) => {
     console.error(error.message);
   }
 
-  const items = await fetchCurrentItems();
-  console.log(items);
+  displayItems();
 });
+
+async function displayItems() {
+  const items = await fetchCurrentItems();
+  console.log("items", items);
+}
 
 async function fetchCurrentItems() {
   const url = "http://localhost:3000/api/v1/items";
