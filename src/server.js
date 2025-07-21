@@ -5,6 +5,13 @@ import cors from "cors";
 const app = express();
 const port = process.env.PORT || 3000;
 
+let domain;
+if (process.env.NODE_ENV === "development") {
+  domain = "127.0.0.1";
+} else {
+  domain = "ser6pro";
+}
+
 // Use JSON middleware
 app.use(express.json());
 app.use(express.static("public"));
@@ -23,5 +30,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`App listening at http://127.0.0.1:${port}`);
+  console.log(`App listening at http://${domain}:${port}`);
 });
