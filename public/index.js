@@ -1,5 +1,6 @@
 const form = document.getElementById("form");
 const itemsContainer = document.getElementById("items-container");
+const locationsContainer = document.getElementById("locations-container");
 const purchaseDate = document.getElementById("purchase_date");
 
 // check if in devleopment
@@ -9,7 +10,10 @@ const API_BASE_URL = isDev ? "http://localhost:3000" : "http://ser6pro:3000";
 // initialize purchase date
 initializePurchaseDate();
 
-document.addEventListener("DOMContentLoaded", displayItems);
+document.addEventListener("DOMContentLoaded", () => {
+  displayItems();
+  displayLocations();
+});
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -61,32 +65,51 @@ function addZero(i) {
   return i;
 }
 
+async function displayLocations() {
+  locationsContainer.innerHTML = "";
+
+  // fetch data that we want to display in #locations-container
+  const locations = await fetchCurrentData(`${API_BASE_URL}/api/v1/locations`);
+  console.log("locations", locations);
+
+  // generate headers
+  const properties = Object.keys(locations[0]);
+  generateHeaders(properties, locationsContainer);
+
+  // generate a row in the grid for each location
+  locations
+    .sort()
+    .map((location) => generateGridRows(location, locationsContainer));
+}
+
 async function displayItems() {
   itemsContainer.innerHTML = "";
 
-  // fetch data that we want to display in x
-  const items = await fetchCurrentItems();
+  // fetch data that we want to display in #items-container
+  const items = await fetchCurrentData(`${API_BASE_URL}/api/v1/items`);
   console.log("items", items);
 
   // generate headers
   const properties = Object.keys(items[0]);
-  generateHeaders(properties);
+  generateHeaders(properties, itemsContainer);
 
   // generate item rows
-  items.sort((a, b) => b.id - a.id).map((item) => generateGridRows(item));
+  items
+    .sort((a, b) => b.id - a.id)
+    .map((item) => generateGridRows(item, itemsContainer));
 }
 
-function generateHeaders(properties) {
+function generateHeaders(properties, parentElement) {
   properties.map((prop) => {
     let header = document.createElement("div");
     header.classList.add("header");
     header.setAttribute("id", `header-${prop}`);
     header.textContent = prop;
-    itemsContainer.appendChild(header);
+    parentElement.appendChild(header);
   });
 }
 
-function generateGridRows(item) {
+function generateGridRows(item, parentElement) {
   for (const key in item) {
     if (Object.prototype.hasOwnProperty.call(item, key)) {
       const element = item[key];
@@ -98,13 +121,12 @@ function generateGridRows(item) {
       }
       itemInfo.setAttribute("id", `${item.id}-${key}`);
       itemInfo.textContent = element;
-      itemsContainer.appendChild(itemInfo);
+      parentElement.appendChild(itemInfo);
     }
   }
 }
 
-async function fetchCurrentItems() {
-  const url = `${API_BASE_URL}/api/v1/items`;
+async function fetchCurrentData(url) {
   const options = {
     headers: {
       "Content-Type": "application/json; charset=utf-8",

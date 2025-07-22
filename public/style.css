@@ -30,6 +30,7 @@ input[type="number"] {
 }
 
 #form-grid,
+#locations-container,
 #items-container {
   display: grid;
 }
@@ -56,6 +57,10 @@ input[type="submit"] {
   grid-template-columns: repeat(8, auto);
 }
 
+#locations-container {
+  grid-template-columns: 6em 10em 6em 10em;
+}
+
 .header {
   font-weight: bolder;
 }
@@ -64,16 +69,16 @@ div[id^="header"] {
   border: 1px solid black;
 }
 
-div[id$="id"]:not(div[id="form-grid"]),
-div[id$="name"],
-div[id$="quantity"],
-div[id$="price"],
-div[id$="date"],
-div[id$="freeText"] {
+#items-container > div[id$="id"]:not(div[id="form-grid"]),
+#items-container > div[id$="name"],
+#items-container > div[id$="quantity"],
+#items-container > div[id$="price"],
+#items-container > div[id$="date"],
+#items-container > div[id$="freeText"] {
   border-left: 1px solid black;
   border-right: 1px solid black;
 }
 
-.bottom-item {
+#items-container > .bottom-item {
   border-bottom: 1px solid black;
 }
