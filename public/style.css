@@ -11,6 +11,12 @@ body {
   font-family: sans-serif;
 }
 
+#form-and-locations-container {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  column-gap: 5em;
+}
+
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
