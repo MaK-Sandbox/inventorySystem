@@ -43,7 +43,13 @@ input[type="submit"] {
   border: none;
   padding: 0.5em 2em;
   border-radius: 0.5rem;
-  background-color: blueviolet;
+  background-color: rgb(176, 134, 214);
+}
+
+#button-container {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: end;
 }
 
 #items-container {
