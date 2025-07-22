@@ -11,12 +11,6 @@ body {
   font-family: sans-serif;
 }
 
-#form-and-locations-container {
-  display: grid;
-  grid-template-columns: repeat(2, auto);
-  column-gap: 5em;
-}
-
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -33,12 +27,19 @@ input[type="number"] {
   width: fit-content;
   padding: 4em 2em;
   background-color: rgb(154, 173, 225);
+  justify-self: end;
 }
 
+#grid-container,
 #form-grid,
 #locations-container,
 #items-container {
   display: grid;
+}
+
+#grid-container {
+  grid-template-columns: repeat(2, auto);
+  gap: 3em;
 }
 
 #form-grid {
@@ -61,10 +62,12 @@ input[type="submit"] {
 
 #items-container {
   grid-template-columns: repeat(8, auto);
+  grid-column: 1 / span 2;
 }
 
 #locations-container {
   grid-template-columns: 6em 10em 6em 10em;
+  justify-self: start;
 }
 
 .header {
