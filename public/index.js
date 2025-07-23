@@ -79,7 +79,9 @@ async function displayLocations() {
   // generate a row in the grid for each location
   locations
     .sort()
-    .map((location) => generateGridRows(location, locationsContainer));
+    .map((location) =>
+      generateGridRows(locations, location, locationsContainer)
+    );
 }
 
 async function displayItems() {
@@ -96,7 +98,7 @@ async function displayItems() {
   // generate item rows
   items
     .sort((a, b) => b.id - a.id)
-    .map((item) => generateGridRows(item, itemsContainer));
+    .map((item) => generateGridRows(items, item, itemsContainer, true));
 }
 
 function generateHeaders(properties, parentElement) {
@@ -109,17 +111,24 @@ function generateHeaders(properties, parentElement) {
   });
 }
 
-function generateGridRows(item, parentElement) {
-  for (const key in item) {
-    if (Object.prototype.hasOwnProperty.call(item, key)) {
-      const element = item[key];
+function generateGridRows(array, object, parentElement, reverseOrder = false) {
+  for (const key in object) {
+    if (Object.prototype.hasOwnProperty.call(object, key)) {
+      const element = object[key];
 
       let itemInfo = document.createElement("div");
       itemInfo.classList.add("item-info");
-      if (item.id === 1) {
-        itemInfo.classList.add("bottom-item");
+
+      if (!reverseOrder) {
+        if (object.id === array.length) {
+          itemInfo.classList.add("bottom-item");
+        }
+      } else {
+        if (object.id === 1) {
+          itemInfo.classList.add("bottom-item");
+        }
       }
-      itemInfo.setAttribute("id", `${item.id}-${key}`);
+      itemInfo.setAttribute("id", `${object.id}-${key}`);
       itemInfo.textContent = element;
       parentElement.appendChild(itemInfo);
     }
