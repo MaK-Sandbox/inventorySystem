@@ -75,7 +75,7 @@ input[type="submit"] {
 }
 
 #locations-container {
-  grid-template-columns: 6em 10em 6em 10em;
+  grid-template-columns: 6em 10em 6em 20em;
 }
 
 .header {
