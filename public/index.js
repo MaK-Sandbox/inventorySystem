@@ -11,8 +11,8 @@ const API_BASE_URL = isDev ? "http://localhost:3000" : "http://ser6pro:3000";
 initializePurchaseDate();
 
 document.addEventListener("DOMContentLoaded", () => {
-  displayItems();
-  displayLocations();
+  displayFetchedData(itemsContainer, `${API_BASE_URL}/api/v1/items`);
+  displayFetchedData(locationsContainer, `${API_BASE_URL}/api/v1/locations`);
 });
 
 form.addEventListener("submit", async (event) => {
@@ -48,7 +48,7 @@ form.addEventListener("submit", async (event) => {
     console.error(error.message);
   }
 
-  displayItems();
+  displayFetchedData(itemsContainer, `${API_BASE_URL}/api/v1/items`);
 });
 
 function initializePurchaseDate() {
@@ -65,40 +65,33 @@ function addZero(i) {
   return i;
 }
 
-async function displayLocations() {
-  locationsContainer.innerHTML = "";
+async function displayFetchedData(gridContainer, url) {
+  gridContainer.innerHTML = "";
 
-  // fetch data that we want to display in #locations-container
-  const locations = await fetchCurrentData(`${API_BASE_URL}/api/v1/locations`);
-  console.log("locations", locations);
-
-  // generate headers
-  const properties = Object.keys(locations[0]);
-  generateHeaders(properties, locationsContainer);
-
-  // generate a row in the grid for each location
-  locations
-    .sort()
-    .map((location) =>
-      generateGridRows(locations, location, locationsContainer)
-    );
-}
-
-async function displayItems() {
-  itemsContainer.innerHTML = "";
-
-  // fetch data that we want to display in #items-container
-  const items = await fetchCurrentData(`${API_BASE_URL}/api/v1/items`);
-  console.log("items", items);
+  // fetch data that we want to display in the grid container
+  const fetchedData = await fetchCurrentData(url);
+  console.log("fetchedData:", fetchedData);
 
   // generate headers
-  const properties = Object.keys(items[0]);
-  generateHeaders(properties, itemsContainer);
+  const properties = Object.keys(fetchedData[0]);
+  generateHeaders(properties, gridContainer);
 
-  // generate item rows
-  items
-    .sort((a, b) => b.id - a.id)
-    .map((item) => generateGridRows(items, item, itemsContainer, true));
+  // fetchedData is an array
+  // generate a row in the grid for each element within the fetchedData array
+  // penending on the grid container, sort the array before creating grid items
+  if (gridContainer === itemsContainer) {
+    fetchedData
+      .sort((a, b) => b.id - a.id)
+      .map((item) => generateGridRows(fetchedData, item, gridContainer, true));
+  }
+
+  if (gridContainer === locationsContainer) {
+    fetchedData
+      .sort()
+      .map((location) =>
+        generateGridRows(fetchedData, location, gridContainer)
+      );
+  }
 }
 
 function generateHeaders(properties, parentElement) {
