@@ -43,7 +43,7 @@ input[type="number"] {
 }
 
 #form-grid {
-  grid-template-columns: 10em 20em;
+  grid-template-columns: 10em 25em;
   row-gap: 0.25em;
 }
 
@@ -78,16 +78,17 @@ div[id^="header"] {
   border: 1px solid black;
 }
 
-#items-container > div[id$="id"]:not(div[id="form-grid"]),
-#items-container > div[id$="name"],
+div[id$="id"]:not(div[id="form-grid"]),
+div[id$="name"],
 #items-container > div[id$="quantity"],
 #items-container > div[id$="price"],
 #items-container > div[id$="date"],
-#items-container > div[id$="freeText"] {
+#items-container > div[id$="freeText"],
+div[id$="description"] {
   border-left: 1px solid black;
   border-right: 1px solid black;
 }
 
-#items-container > .bottom-item {
+.bottom-item {
   border-bottom: 1px solid black;
 }
