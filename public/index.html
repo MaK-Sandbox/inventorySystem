@@ -10,54 +10,68 @@
   <body>
     <h1>Inventory System Management</h1>
     <div id="grid-container">
-      <form id="form" action="" method="post">
-        <div id="form-grid">
-          <label for="name">Name:</label>
-          <input id="name" name="name" type="text" placeholder="Desk Chair" />
-          <label for="quantity">Quantity:</label>
-          <input id="quantity" name="quantity" type="number" placeholder="1" />
-          <label for="location_id">Location id:</label>
-          <input
-            id="location_id"
-            name="location_id"
-            type="number"
-            placeholder="1"
-          />
-          <label for="purchase_price">Purchase price:</label>
-          <input
-            id="purchase_price"
-            name="purchase_price"
-            type="number"
-            placeholder="50"
-          />
-          <label for="currency_id">Currency id:</label>
-          <input
-            id="currency_id"
-            name="currency_id"
-            type="number"
-            placeholder="1"
-          />
-          <label for="purchase_date">Purchase date:</label>
-          <input
-            id="purchase_date"
-            name="purchase_date"
-            type="text"
-            placeholder="2025-07-21 10:00:00"
-          />
-          <label for="freeText">Free text:</label>
-          <input
-            id="freeText"
-            name="freeText"
-            type="text"
-            placeholder="optional: add text here"
-          />
-        </div>
-        <div id="button-container">
-          <input type="submit" value="Add item ➕" />
-        </div>
-      </form>
-      <div id="locations-container"></div>
-      <div id="items-container"></div>
+      <div id="form-block">
+        <h2>Add item to database</h2>
+        <form id="form" action="" method="post">
+          <div id="form-grid">
+            <label for="name">Name:</label>
+            <input id="name" name="name" type="text" placeholder="Desk Chair" />
+            <label for="quantity">Quantity:</label>
+            <input
+              id="quantity"
+              name="quantity"
+              type="number"
+              placeholder="1"
+            />
+            <label for="location_id">Location id:</label>
+            <input
+              id="location_id"
+              name="location_id"
+              type="number"
+              placeholder="1"
+            />
+            <label for="purchase_price">Purchase price:</label>
+            <input
+              id="purchase_price"
+              name="purchase_price"
+              type="number"
+              placeholder="50"
+            />
+            <label for="currency_id">Currency id:</label>
+            <input
+              id="currency_id"
+              name="currency_id"
+              type="number"
+              placeholder="1"
+            />
+            <label for="purchase_date">Purchase date:</label>
+            <input
+              id="purchase_date"
+              name="purchase_date"
+              type="text"
+              placeholder="2025-07-21 10:00:00"
+            />
+            <label for="freeText">Free text:</label>
+            <input
+              id="freeText"
+              name="freeText"
+              type="text"
+              placeholder="optional: add text here"
+            />
+          </div>
+          <div id="button-container">
+            <input type="submit" value="Add item ➕" />
+          </div>
+        </form>
+      </div>
+      <div id="locations-block">
+        <h2>Locations:</h2>
+        <div id="locations-container"></div>
+      </div>
+      <div id="items-block">
+        <h2>Items:</h2>
+        <div id="items-container"></div>
+      </div>
     </div>
   </body>
 </html>

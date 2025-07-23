@@ -23,11 +23,13 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
+#form-block {
+  justify-self: end;
+}
+
 #form {
-  width: fit-content;
   padding: 4em 2em;
   background-color: rgb(154, 173, 225);
-  justify-self: end;
 }
 
 #grid-container,
@@ -60,14 +62,20 @@ input[type="submit"] {
   justify-content: end;
 }
 
+#items-block {
+  grid-column: 1 / span 2;
+}
+
 #items-container {
   grid-template-columns: repeat(8, auto);
-  grid-column: 1 / span 2;
+}
+
+#locations-block {
+  justify-self: start;
 }
 
 #locations-container {
   grid-template-columns: 6em 10em 6em 10em;
-  justify-self: start;
 }
 
 .header {
