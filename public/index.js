@@ -116,21 +116,20 @@ function generateGridRows(array, object, parentElement, reverseOrder = false) {
     if (Object.prototype.hasOwnProperty.call(object, key)) {
       const element = object[key];
 
-      let itemInfo = document.createElement("div");
-      itemInfo.classList.add("item-info");
+      let newElement = document.createElement("div");
 
       if (!reverseOrder) {
         if (object.id === array.length) {
-          itemInfo.classList.add("bottom-item");
+          newElement.classList.add("bottom-item");
         }
       } else {
         if (object.id === 1) {
-          itemInfo.classList.add("bottom-item");
+          newElement.classList.add("bottom-item");
         }
       }
-      itemInfo.setAttribute("id", `${object.id}-${key}`);
-      itemInfo.textContent = element;
-      parentElement.appendChild(itemInfo);
+      newElement.setAttribute("id", `${object.id}-${key}`);
+      newElement.textContent = element;
+      parentElement.appendChild(newElement);
     }
   }
 }
