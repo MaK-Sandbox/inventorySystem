@@ -83,8 +83,8 @@ input[type="submit"] {
   justify-self: start;
 }
 
-#locations-container {
-  grid-template-columns: 6em 10em 6em 20em;
+li {
+  padding-left: 1em;
 }
 
 .header {

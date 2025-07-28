@@ -10,9 +10,12 @@ const API_BASE_URL = isDev ? "http://localhost:3000" : "http://ser6pro:3000";
 // initialize purchase date
 initializePurchaseDate();
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   displayFetchedData(itemsContainer, `${API_BASE_URL}/api/v1/items`);
-  displayFetchedData(locationsContainer, `${API_BASE_URL}/api/v1/locations`);
+  // displayFetchedData(locationsContainer, `${API_BASE_URL}/api/v1/locations`);
+  const nestedHTML = await listLocations();
+  console.log(nestedHTML);
+  locationsContainer.innerHTML = nestedHTML;
 });
 
 form.addEventListener("submit", async (event) => {
@@ -63,6 +66,52 @@ function initializePurchaseDate() {
 function addZero(i) {
   if (i < 10) return `0${i}`;
   return i;
+}
+
+async function listLocations() {
+  locationsContainer.innerHTML = "";
+
+  // fetch data that we want to display in the grid container
+  const locations = await fetchCurrentData(`${API_BASE_URL}/api/v1/locations`);
+  // console.log("locations:", locations);
+
+  // Step 1: Create a map of nodes by id
+  const map = new Map();
+  locations.forEach((location) => {
+    map.set(location.id, { ...location, children: [] });
+  });
+
+  // Step 2: Create a root array for top-level nodes
+  const roots = [];
+
+  // Step 3: Build the tree by linking children ot their parent
+  locations.forEach((location) => {
+    if (location.parent_id === null) {
+      roots.push(map.get(location.id));
+    } else {
+      const parent = map.get(location.parent_id);
+      if (parent) {
+        parent.children.push(map.get(location.id));
+      }
+    }
+  });
+
+  // Step 4: Recursively render the nested unordered list
+  function renderList(locations) {
+    let html = "<ul>";
+    for (const location of locations) {
+      html += `<li>id: ${location.id} - ${location.name}`;
+      if (location.children.length > 0) {
+        html += renderList(location.children);
+      }
+      html += "</li>";
+    }
+    html += "</ul>";
+    return html;
+  }
+
+  // Step 5: Render the final html
+  return renderList(roots);
 }
 
 async function displayFetchedData(gridContainer, url) {
