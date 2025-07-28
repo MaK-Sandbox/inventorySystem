@@ -1,6 +1,7 @@
 const form = document.getElementById("form");
 const itemsContainer = document.getElementById("items-container");
 const locationsContainer = document.getElementById("locations-container");
+const locationSelection = document.getElementById("select-location_id");
 const purchaseDate = document.getElementById("purchase_date");
 
 // check if in devleopment
@@ -17,6 +18,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   // display fetched locations
   const nestedHTML = await listLocations();
   locationsContainer.innerHTML = nestedHTML;
+
+  // display location options in the location selection
+  displayLocationSelection();
 });
 
 form.addEventListener("submit", async (event) => {
@@ -116,6 +120,23 @@ async function listLocations() {
 
   // Step 5: Render the final html
   return renderList(roots);
+}
+
+async function displayLocationSelection() {
+  locationSelection.innerHTML = "";
+
+  // fetch data that we want to display in the grid container
+  const locations = await fetchCurrentData(`${API_BASE_URL}/api/v1/locations`);
+  console.log("locations:", locations);
+
+  locations.forEach((location) => {
+    let option = document.createElement("option");
+    option.classList.add("location-options");
+    option.setAttribute("value", location.name);
+    option.setAttribute("id", location.id);
+    option.textContent = `id: ${location.id} - ${location.name}`;
+    locationSelection.appendChild(option);
+  });
 }
 
 async function displayFetchedData(url) {

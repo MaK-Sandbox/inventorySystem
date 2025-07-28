@@ -71,7 +71,8 @@ input[type="submit"] {
   justify-content: end;
 }
 
-#items-block {
+#items-block,
+#search-bar-block {
   grid-column: 1 / span 2;
 }
 
