@@ -11,7 +11,10 @@ const API_BASE_URL = isDev ? "http://localhost:3000" : "http://ser6pro:3000";
 initializePurchaseDate();
 
 document.addEventListener("DOMContentLoaded", async () => {
+  // display fetched items
   displayFetchedData(`${API_BASE_URL}/api/v1/items`);
+
+  // display fetched locations
   const nestedHTML = await listLocations();
   locationsContainer.innerHTML = nestedHTML;
 });
