@@ -1,4 +1,5 @@
 const form = document.getElementById("form");
+const searchForm = document.getElementById("search-bar-block");
 const itemsContainer = document.getElementById("items-container");
 const locationsContainer = document.getElementById("locations-container");
 const locationSelection = document.getElementById("select-location_id");
@@ -57,6 +58,15 @@ form.addEventListener("submit", async (event) => {
   }
 
   displayFetchedData(itemsContainer, `${API_BASE_URL}/api/v1/items`);
+});
+
+searchForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const formData = new FormData(searchForm);
+
+  const dataObject = Object.fromEntries(formData);
+  console.log("dataObject:", dataObject);
 });
 
 function initializePurchaseDate() {
@@ -132,7 +142,7 @@ async function displayLocationSelection() {
   locations.forEach((location) => {
     let option = document.createElement("option");
     option.classList.add("location-options");
-    option.setAttribute("value", location.name);
+    option.setAttribute("value", location.id);
     option.setAttribute("id", location.id);
     option.textContent = `id: ${location.id} - ${location.name}`;
     locationSelection.appendChild(option);
