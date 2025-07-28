@@ -137,7 +137,6 @@ async function displayLocationSelection() {
 
   // fetch data that we want to display in the grid container
   const locations = await fetchCurrentData(`${API_BASE_URL}/api/v1/locations`);
-  console.log("locations:", locations);
 
   locations.forEach((location) => {
     let option = document.createElement("option");
