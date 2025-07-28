@@ -11,10 +11,8 @@ const API_BASE_URL = isDev ? "http://localhost:3000" : "http://ser6pro:3000";
 initializePurchaseDate();
 
 document.addEventListener("DOMContentLoaded", async () => {
-  displayFetchedData(itemsContainer, `${API_BASE_URL}/api/v1/items`);
-  // displayFetchedData(locationsContainer, `${API_BASE_URL}/api/v1/locations`);
+  displayFetchedData(`${API_BASE_URL}/api/v1/items`);
   const nestedHTML = await listLocations();
-  console.log(nestedHTML);
   locationsContainer.innerHTML = nestedHTML;
 });
 
@@ -114,8 +112,8 @@ async function listLocations() {
   return renderList(roots);
 }
 
-async function displayFetchedData(gridContainer, url) {
-  gridContainer.innerHTML = "";
+async function displayFetchedData(url) {
+  itemsContainer.innerHTML = "";
 
   // fetch data that we want to display in the grid container
   const fetchedData = await fetchCurrentData(url);
@@ -123,55 +121,40 @@ async function displayFetchedData(gridContainer, url) {
 
   // generate headers
   const properties = Object.keys(fetchedData[0]);
-  generateHeaders(properties, gridContainer);
+  generateHeaders(properties);
 
   // fetchedData is an array
   // generate a row in the grid for each element within the fetchedData array
-  // penending on the grid container, sort the array before creating grid items
-  if (gridContainer === itemsContainer) {
-    fetchedData
-      .sort((a, b) => b.id - a.id)
-      .map((item) => generateGridRows(fetchedData, item, gridContainer, true));
-  }
-
-  if (gridContainer === locationsContainer) {
-    fetchedData
-      .sort()
-      .map((location) =>
-        generateGridRows(fetchedData, location, gridContainer)
-      );
-  }
+  // sort the array before creating grid items
+  fetchedData
+    .sort((a, b) => b.id - a.id)
+    .map((item) => generateGridRows(fetchedData, item));
 }
 
-function generateHeaders(properties, parentElement) {
+function generateHeaders(properties) {
   properties.map((prop) => {
     let header = document.createElement("div");
     header.classList.add("header");
     header.setAttribute("id", `header-${prop}`);
     header.textContent = prop;
-    parentElement.appendChild(header);
+    itemsContainer.appendChild(header);
   });
 }
 
-function generateGridRows(array, object, parentElement, reverseOrder = false) {
+function generateGridRows(array, object) {
   for (const key in object) {
     if (Object.prototype.hasOwnProperty.call(object, key)) {
       const element = object[key];
 
       let newElement = document.createElement("div");
 
-      if (!reverseOrder) {
-        if (object.id === array.length) {
-          newElement.classList.add("bottom-item");
-        }
-      } else {
-        if (object.id === 1) {
-          newElement.classList.add("bottom-item");
-        }
+      if (object.id === 1) {
+        newElement.classList.add("bottom-item");
       }
+
       newElement.setAttribute("id", `${object.id}-${key}`);
       newElement.textContent = element;
-      parentElement.appendChild(newElement);
+      itemsContainer.appendChild(newElement);
     }
   }
 }
