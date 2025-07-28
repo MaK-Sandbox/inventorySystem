@@ -76,21 +76,24 @@ async function listLocations() {
   const locations = await fetchCurrentData(`${API_BASE_URL}/api/v1/locations`);
   // console.log("locations:", locations);
 
-  // Step 1: Create a map of nodes by id
+  // Step 1: Create a map object. Use location id as keys and location objects as values.
+  // Ensure to add a new property called children in the location objects which has an empty array as its value
   const map = new Map();
   locations.forEach((location) => {
     map.set(location.id, { ...location, children: [] });
   });
 
-  // Step 2: Create a root array for top-level nodes
+  // Step 2: Create an empty root array for top-level nodes
   const roots = [];
 
-  // Step 3: Build the tree by linking children ot their parent
+  // Step 3: Build the tree by linking children to their parent
   locations.forEach((location) => {
     if (location.parent_id === null) {
       roots.push(map.get(location.id));
     } else {
       const parent = map.get(location.parent_id);
+      // map.get() will return undefined if the sought after value does not exist
+      // if the parent exists, add the location.id of the child to the children array
       if (parent) {
         parent.children.push(map.get(location.id));
       }
@@ -120,7 +123,6 @@ async function displayFetchedData(url) {
 
   // fetch data that we want to display in the grid container
   const fetchedData = await fetchCurrentData(url);
-  console.log("fetchedData:", fetchedData);
 
   // generate headers
   const properties = Object.keys(fetchedData[0]);
