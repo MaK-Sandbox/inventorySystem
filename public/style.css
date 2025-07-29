@@ -82,7 +82,7 @@ input[type="submit"] {
 
 #search-bar-block {
   justify-content: center;
-  grid-template-columns: 10em 40em;
+  grid-template-columns: repeat(2, auto);
   gap: 1em;
 }
 
