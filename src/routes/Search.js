@@ -36,6 +36,7 @@ router.get("/", (req, res) => {
       }
     }
 
+    // remember to close the parantheses
     sqlStatement += ")";
 
     // we need a placeholder for each argument that we want to use for our sql statement
