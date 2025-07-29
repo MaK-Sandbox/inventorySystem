@@ -44,6 +44,7 @@ input[type="number"] {
 #grid-container,
 #form-grid,
 #locations-container,
+#search-bar-block,
 #items-container {
   display: grid;
 }
@@ -79,8 +80,25 @@ input[type="submit"] {
   grid-column: 1 / span 2;
 }
 
+#search-bar-block {
+  justify-content: center;
+  grid-template-columns: 10em 40em;
+  gap: 1em;
+}
+
+#search-bar-block label {
+  align-self: center;
+  text-align: end;
+}
+
+#search-bar-block select {
+  padding-left: 1em;
+}
+
 #search-bar {
-  width: fit-content;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   border-radius: 1.5rem;
   background-color: rgb(196, 209, 122);
 }
@@ -91,8 +109,8 @@ input[type="submit"] {
 }
 
 #search-bar input[type="text"] {
+  width: 100%;
   padding: 1em 0;
-  width: 30em;
   background-color: transparent;
   border: none;
 }
