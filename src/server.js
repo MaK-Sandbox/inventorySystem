@@ -20,18 +20,15 @@ app.use(cors());
 // Import and initialize routers
 import itemsRouter from "./routes/Items.js";
 import locationsRouter from "./routes/Locations.js";
+import searchRouter from "./routes/Search.js";
 
 // Use imported routers
 app.use("/api/v1/items", itemsRouter);
 app.use("/api/v1/locations", locationsRouter);
+app.use("/search", searchRouter);
 
 app.get("/", (req, res) => {
   res.send("Test route");
-});
-
-app.get("/search", (req, res) => {
-  const query = req.query;
-  res.json(query);
 });
 
 app.listen(port, () => {
