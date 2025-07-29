@@ -35,29 +35,11 @@ form.addEventListener("submit", async (event) => {
   console.log(payload);
 
   const url = `${API_BASE_URL}/api/v1/items`;
-  const options = {
-    method: "post",
-    headers: {
-      "Content-Type": "application/json; charset=utf-8",
-      "Access-Control-Allow-Origin": "*",
-    },
-    body: payload,
-  };
 
-  try {
-    const response = await fetch(url, options);
+  const newObject = await postNewData(url, payload);
+  console.log("newObject:", newObject);
 
-    if (!response.ok) {
-      throw new Error(`Response status: ${response.status}`);
-    }
-
-    const json = await response.json();
-    console.log(json);
-  } catch (error) {
-    console.error(error.message);
-  }
-
-  displayFetchedData(itemsContainer, `${API_BASE_URL}/api/v1/items`);
+  displayFetchedData(`${API_BASE_URL}/api/v1/items`);
 });
 
 searchForm.addEventListener("submit", async (event) => {
@@ -200,6 +182,31 @@ function generateGridRows(array, object) {
       newElement.textContent = element;
       itemsContainer.appendChild(newElement);
     }
+  }
+}
+
+async function postNewData(url, payload) {
+  const options = {
+    method: "post",
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Access-Control-Allow-Origin": "*",
+    },
+
+    body: payload,
+  };
+
+  try {
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    console.error(error.message);
   }
 }
 
