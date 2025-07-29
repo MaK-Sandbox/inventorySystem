@@ -74,27 +74,8 @@ searchForm.addEventListener("submit", async (event) => {
   const searchUrl = baseURL + searchQuery;
   const encodedURL = encodeURI(searchUrl.toLowerCase());
 
-  console.log("encodedURL:", encodedURL);
-
-  const options = {
-    headers: {
-      "Content-Type": "application/json; charset=utf-8",
-      "Access-Control-Allow-Origin": "*",
-    },
-  };
-
-  try {
-    const response = await fetch(encodedURL, options);
-
-    if (!response.ok) {
-      throw new Error(`Response status: ${response.status}`);
-    }
-
-    const json = await response.json();
-    console.log(json);
-  } catch (error) {
-    console.error(error.message);
-  }
+  const response = await fetchCurrentData(encodedURL);
+  console.log("response", response);
 });
 
 function initializePurchaseDate() {
