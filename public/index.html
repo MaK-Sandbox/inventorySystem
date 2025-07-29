@@ -72,13 +72,16 @@
         <label for="select-location_id">Select a location:</label>
         <select name="select" id="select-location_id" required></select>
         <label for="search-input">Search input:</label>
-        <input
-          id="search-input"
-          name="search_input"
-          type="text"
-          placeholder="Search..."
-        />
-        <input type="submit" value="Search" />
+        <div id="search-bar">
+          <i>🔍</i>
+          <input
+            id="search-input"
+            name="search_input"
+            type="text"
+            placeholder="Search..."
+          />
+          <input type="submit" value="Search" />
+        </div>
       </form>
       <div id="items-block">
         <h2>Items:</h2>

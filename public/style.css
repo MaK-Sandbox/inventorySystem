@@ -60,6 +60,9 @@ input[type="number"] {
 
 input[type="submit"] {
   border: none;
+}
+
+#form input[type="submit"] {
   padding: 0.5em 2em;
   border-radius: 0.5rem;
   background-color: rgb(176, 134, 214);
@@ -74,6 +77,35 @@ input[type="submit"] {
 #items-block,
 #search-bar-block {
   grid-column: 1 / span 2;
+}
+
+#search-bar {
+  width: fit-content;
+  border-radius: 1.5rem;
+  background-color: rgb(196, 209, 122);
+}
+
+#search-bar i {
+  font-style: normal;
+  padding: 1em;
+}
+
+#search-bar input[type="text"] {
+  padding: 1em 0;
+  width: 30em;
+  background-color: transparent;
+  border: none;
+}
+
+#search-bar input[type="submit"] {
+  width: 8em;
+  padding: 1em 0;
+  border-radius: 0 1.5rem 1.5rem 0;
+  background-color: rgb(154, 173, 225);
+}
+
+#search-bar input:focus {
+  outline: none;
 }
 
 #items-container {
