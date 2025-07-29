@@ -60,13 +60,41 @@ form.addEventListener("submit", async (event) => {
   displayFetchedData(itemsContainer, `${API_BASE_URL}/api/v1/items`);
 });
 
-searchForm.addEventListener("submit", (event) => {
+searchForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   const formData = new FormData(searchForm);
 
   const dataObject = Object.fromEntries(formData);
-  console.log("dataObject:", dataObject);
+  const dataArray = Object.entries(dataObject);
+
+  const baseURL = `${API_BASE_URL}/search?`;
+  const searchQuery = dataArray.map((set) => set.join("=")).join("&");
+
+  const searchUrl = baseURL + searchQuery;
+  const encodedURL = encodeURI(searchUrl.toLowerCase());
+
+  console.log("encodedURL:", encodedURL);
+
+  const options = {
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Access-Control-Allow-Origin": "*",
+    },
+  };
+
+  try {
+    const response = await fetch(encodedURL, options);
+
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    const json = await response.json();
+    console.log(json);
+  } catch (error) {
+    console.error(error.message);
+  }
 });
 
 function initializePurchaseDate() {

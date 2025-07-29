@@ -29,6 +29,11 @@ app.get("/", (req, res) => {
   res.send("Test route");
 });
 
+app.get("/search", (req, res) => {
+  const query = req.query;
+  res.json(query);
+});
+
 app.listen(port, () => {
   console.log(`App listening at http://${domain}:${port}`);
 });
