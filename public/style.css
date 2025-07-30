@@ -155,8 +155,12 @@ input[type="submit"] {
   grid-template-columns: repeat(8, auto) repeat(2, 2em);
 }
 
-#items-container i {
+.icon {
   font-style: normal;
+}
+
+.icon:hover {
+  cursor: pointer;
 }
 
 #locations-block {
