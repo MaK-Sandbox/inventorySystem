@@ -147,15 +147,21 @@ async function displayFetchedData(url) {
 
   // generate headers
   const properties = Object.keys(fetchedData[0]);
-  generateHeaders(properties);
+
+  // we also need an array that describes the type of icons we expect to create for this project
+  const icons = ["edit", "delete"];
+
+  generateHeaders(properties, icons);
 
   // fetchedData is an array
   // generate a row in the grid for each element within the fetchedData array
   // sort the array before creating grid items
-  fetchedData.sort((a, b) => b.id - a.id).map((item) => generateGridRows(item));
+  fetchedData
+    .sort((a, b) => b.id - a.id)
+    .map((item) => generateGridRows(item, icons));
 }
 
-function generateHeaders(properties) {
+function generateHeaders(properties, icons) {
   properties.map((prop) => {
     let header = document.createElement("div");
     header.classList.add("header");
@@ -163,9 +169,20 @@ function generateHeaders(properties) {
     header.textContent = prop;
     itemsContainer.appendChild(header);
   });
+
+  // create two empty rows (no header text, just empty divs)
+  for (let i = 0; i < icons.length; i++) {
+    let icon = icons[i];
+
+    let emptyHeader = document.createElement("div");
+    emptyHeader.classList.add("emptyHeader");
+    emptyHeader.setAttribute("id", `header-${icon}`);
+    emptyHeader.textContent = "";
+    itemsContainer.appendChild(emptyHeader);
+  }
 }
 
-function generateGridRows(object) {
+function generateGridRows(object, icons) {
   for (const key in object) {
     if (Object.prototype.hasOwnProperty.call(object, key)) {
       const element = object[key];
@@ -180,6 +197,30 @@ function generateGridRows(object) {
       newElement.textContent = element;
       itemsContainer.appendChild(newElement);
     }
+  }
+  generateIcons(icons, object.id);
+}
+
+function generateIcons(icons, id) {
+  // create icons for each row in the grid
+  for (let i = 0; i < icons.length; i++) {
+    let icon = icons[i];
+
+    let iconElement = document.createElement("i");
+    iconElement.classList.add("icon");
+    iconElement.setAttribute("id", `${id}-${icon}`);
+
+    if (icon === "edit") {
+      iconElement.textContent = "✏️";
+      iconElement.addEventListener("click", () => console.log("edit icon"));
+    }
+
+    if (icon === "delete") {
+      iconElement.textContent = "❌";
+      iconElement.addEventListener("click", () => console.log("delete icon"));
+    }
+
+    itemsContainer.appendChild(iconElement);
   }
 }
 
