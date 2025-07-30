@@ -15,10 +15,14 @@ initializePurchaseDate();
 
 document.addEventListener("DOMContentLoaded", async () => {
   // display fetched items
-  displayFetchedData(`${API_BASE_URL}/api/v1/items`, [
-    { name: "edit", emoji: "✏️" },
-    { name: "delete", emoji: "❌" },
-  ]);
+  displayFetchedData(
+    `${API_BASE_URL}/api/v1/items`,
+    [
+      { name: "edit", emoji: "✏️" },
+      { name: "delete", emoji: "❌" },
+    ],
+    itemsContainer
+  );
 
   // display fetched locations
   const nestedHTML = await listLocations();
@@ -143,8 +147,8 @@ async function displayLocationSelection() {
   });
 }
 
-async function displayFetchedData(url, iconArray) {
-  itemsContainer.innerHTML = "";
+async function displayFetchedData(url, iconArray, parentElement) {
+  parentElement.innerHTML = "";
 
   // fetch data that we want to display in the grid container
   const fetchedData = await fetchCurrentData(url);
@@ -153,23 +157,23 @@ async function displayFetchedData(url, iconArray) {
   const properties = Object.keys(fetchedData[0]);
 
   // we also need an array that describes the type of icons we expect to create for this project
-  generateHeaders(properties, iconArray);
+  generateHeaders(properties, iconArray, parentElement);
 
   // fetchedData is an array
   // generate a row in the grid for each element within the fetchedData array
   // sort the array before creating grid items
   fetchedData
     .sort((a, b) => b.id - a.id)
-    .map((item) => generateGridRows(item, iconArray));
+    .map((item) => generateGridRows(item, iconArray, parentElement));
 }
 
-function generateHeaders(properties, icons) {
+function generateHeaders(properties, icons, parentElement) {
   properties.map((prop) => {
     let header = document.createElement("div");
     header.classList.add("header");
     header.setAttribute("id", `header-${prop}`);
     header.textContent = prop;
-    itemsContainer.appendChild(header);
+    parentElement.appendChild(header);
   });
 
   // create two empty rows (no header text, just empty divs)
@@ -180,11 +184,11 @@ function generateHeaders(properties, icons) {
     emptyHeader.classList.add("emptyHeader");
     emptyHeader.setAttribute("id", `header-${icon.name}`);
     emptyHeader.textContent = "";
-    itemsContainer.appendChild(emptyHeader);
+    parentElement.appendChild(emptyHeader);
   }
 }
 
-function generateGridRows(object, icons) {
+function generateGridRows(object, icons, parentElement) {
   for (const key in object) {
     if (Object.prototype.hasOwnProperty.call(object, key)) {
       const element = object[key];
@@ -197,13 +201,13 @@ function generateGridRows(object, icons) {
 
       newElement.setAttribute("id", `${object.id}-${key}`);
       newElement.textContent = element;
-      itemsContainer.appendChild(newElement);
+      parentElement.appendChild(newElement);
     }
   }
-  generateIcons(icons, object.id);
+  generateIcons(icons, object.id, parentElement);
 }
 
-function generateIcons(icons, id) {
+function generateIcons(icons, id, parentElement) {
   // create icons for each row in the grid
   for (let i = 0; i < icons.length; i++) {
     let icon = icons[i];
@@ -214,7 +218,7 @@ function generateIcons(icons, id) {
 
     if (icon.name === "edit") {
       iconElement.textContent = icon.emoji;
-      iconElement.addEventListener("click", (event) => {
+      iconElement.addEventListener("click", async (event) => {
         const id = event.target.id.split("-")[0];
         console.log("id:", id);
 
@@ -233,14 +237,18 @@ function generateIcons(icons, id) {
         deleteOneItem(`${API_BASE_URL}/api/v1/items/${id}`);
 
         // once item is deleted, re-render items
-        displayFetchedData(`${API_BASE_URL}/api/v1/items`, [
-          { name: "edit", emoji: "✏️" },
-          { name: "delete", emoji: "❌" },
-        ]);
+        displayFetchedData(
+          `${API_BASE_URL}/api/v1/items`,
+          [
+            { name: "edit", emoji: "✏️" },
+            { name: "delete", emoji: "❌" },
+          ],
+          itemsContainer
+        );
       });
     }
 
-    itemsContainer.appendChild(iconElement);
+    parentElement.appendChild(iconElement);
   }
 }
 
