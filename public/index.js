@@ -3,6 +3,7 @@ const searchForm = document.getElementById("search-bar-block");
 const itemsContainer = document.getElementById("items-container");
 const locationsContainer = document.getElementById("locations-container");
 const locationSelection = document.getElementById("select-location_id");
+const editItemContainer = document.getElementById("edit-item-container");
 const purchaseDate = document.getElementById("purchase_date");
 
 // check if in devleopment
@@ -14,7 +15,10 @@ initializePurchaseDate();
 
 document.addEventListener("DOMContentLoaded", async () => {
   // display fetched items
-  displayFetchedData(`${API_BASE_URL}/api/v1/items`);
+  displayFetchedData(`${API_BASE_URL}/api/v1/items`, [
+    { name: "edit", emoji: "✏️" },
+    { name: "delete", emoji: "❌" },
+  ]);
 
   // display fetched locations
   const nestedHTML = await listLocations();
@@ -139,7 +143,7 @@ async function displayLocationSelection() {
   });
 }
 
-async function displayFetchedData(url) {
+async function displayFetchedData(url, iconArray) {
   itemsContainer.innerHTML = "";
 
   // fetch data that we want to display in the grid container
@@ -149,16 +153,14 @@ async function displayFetchedData(url) {
   const properties = Object.keys(fetchedData[0]);
 
   // we also need an array that describes the type of icons we expect to create for this project
-  const icons = ["edit", "delete"];
-
-  generateHeaders(properties, icons);
+  generateHeaders(properties, iconArray);
 
   // fetchedData is an array
   // generate a row in the grid for each element within the fetchedData array
   // sort the array before creating grid items
   fetchedData
     .sort((a, b) => b.id - a.id)
-    .map((item) => generateGridRows(item, icons));
+    .map((item) => generateGridRows(item, iconArray));
 }
 
 function generateHeaders(properties, icons) {
@@ -176,7 +178,7 @@ function generateHeaders(properties, icons) {
 
     let emptyHeader = document.createElement("div");
     emptyHeader.classList.add("emptyHeader");
-    emptyHeader.setAttribute("id", `header-${icon}`);
+    emptyHeader.setAttribute("id", `header-${icon.name}`);
     emptyHeader.textContent = "";
     itemsContainer.appendChild(emptyHeader);
   }
@@ -208,21 +210,22 @@ function generateIcons(icons, id) {
 
     let iconElement = document.createElement("i");
     iconElement.classList.add("icon");
-    iconElement.setAttribute("id", `${id}-${icon}`);
+    iconElement.setAttribute("id", `${id}-${icon.name}`);
 
-    if (icon === "edit") {
-      iconElement.textContent = "✏️";
+    if (icon.name === "edit") {
+      iconElement.textContent = icon.emoji;
       iconElement.addEventListener("click", (event) => {
         const id = event.target.id.split("-")[0];
-
         console.log("id:", id);
+
+        // alternate between which element is visible in the browser and which is hidden
         document.getElementById("items-block").classList.add("hide");
         document.getElementById("edit-item-block").classList.remove("hide");
       });
     }
 
-    if (icon === "delete") {
-      iconElement.textContent = "❌";
+    if (icon.name === "delete") {
+      iconElement.textContent = icon.emoji;
       iconElement.addEventListener("click", (event) => {
         const id = event.target.id.split("-")[0];
 
@@ -230,7 +233,10 @@ function generateIcons(icons, id) {
         deleteOneItem(`${API_BASE_URL}/api/v1/items/${id}`);
 
         // once item is deleted, re-render items
-        displayFetchedData(`${API_BASE_URL}/api/v1/items`);
+        displayFetchedData(`${API_BASE_URL}/api/v1/items`, [
+          { name: "edit", emoji: "✏️" },
+          { name: "delete", emoji: "❌" },
+        ]);
       });
     }
 
