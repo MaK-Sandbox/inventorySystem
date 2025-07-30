@@ -6,9 +6,19 @@
   padding: 0;
 }
 
+:root {
+  --text-color: hsl(120, 27%, 2%);
+  --background-color: hsl(110, 30%, 96%);
+  --primary-color: hsl(110, 27%, 50%);
+  --secondary-color: hsl(194, 26%, 70%);
+  --accent-color: hsl(221, 27%, 63%);
+}
+
 body {
   padding: 1em;
   font-family: sans-serif;
+  color: var(--text-color);
+  background-color: var(--background-color);
 }
 
 h1 {
@@ -37,8 +47,19 @@ input[type="number"] {
 }
 
 #form {
+  border-radius: 1.5rem;
   padding: 4em 2em;
-  background-color: rgb(154, 173, 225);
+  background-color: var(--accent-color);
+}
+
+#form input {
+  background-color: var(--background-color);
+  border: none;
+  padding: 0 0.25em;
+}
+
+#form input:focus {
+  outline: none;
 }
 
 #grid-container,
@@ -64,9 +85,9 @@ input[type="submit"] {
 }
 
 #form input[type="submit"] {
-  padding: 0.5em 2em;
-  border-radius: 0.5rem;
-  background-color: rgb(176, 134, 214);
+  padding: 1em;
+  border-radius: 1.5rem;
+  background-color: var(--background-color);
 }
 
 #button-container {
@@ -92,6 +113,7 @@ input[type="submit"] {
 }
 
 #search-bar-block select {
+  background-color: var(--secondary-color);
   padding: 1em;
   border-radius: 1.5rem;
   border: none;
@@ -102,7 +124,7 @@ input[type="submit"] {
   flex-direction: row;
   justify-content: space-between;
   border-radius: 1.5rem;
-  background-color: rgb(196, 209, 122);
+  background-color: var(--secondary-color);
 }
 
 #search-bar i {
@@ -121,7 +143,8 @@ input[type="submit"] {
   width: 8em;
   padding: 1em 0;
   border-radius: 0 1.5rem 1.5rem 0;
-  background-color: rgb(154, 173, 225);
+  border: 1px solid var(--accent-color);
+  background-color: var(--background-color);
 }
 
 #search-bar input:focus {
