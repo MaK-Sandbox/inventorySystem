@@ -217,7 +217,7 @@ function generateIcons(icons, id) {
 
         console.log("id:", id);
         document.getElementById("items-block").classList.add("hide");
-        document.getElementById("edit-item-container").classList.remove("hide");
+        document.getElementById("edit-item-block").classList.remove("hide");
       });
     }
 

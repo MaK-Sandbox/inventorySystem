@@ -103,7 +103,7 @@ input[type="submit"] {
 
 #items-block,
 #search-bar-block,
-#edit-item-container {
+#edit-item-block {
   grid-column: 1 / span 2;
 }
 
