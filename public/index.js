@@ -212,7 +212,13 @@ function generateIcons(icons, id) {
 
     if (icon === "edit") {
       iconElement.textContent = "✏️";
-      iconElement.addEventListener("click", () => console.log("edit icon"));
+      iconElement.addEventListener("click", (event) => {
+        const id = event.target.id.split("-")[0];
+
+        console.log("id:", id);
+        document.getElementById("items-block").classList.add("hide");
+        document.getElementById("edit-item-container").classList.remove("hide");
+      });
     }
 
     if (icon === "delete") {

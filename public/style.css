@@ -21,6 +21,10 @@ body {
   background-color: var(--background-color);
 }
 
+.hide {
+  display: none;
+}
+
 h1 {
   text-align: center;
   margin: 2rem 0;
@@ -66,7 +70,8 @@ input[type="number"] {
 #form-grid,
 #locations-container,
 #search-bar-block,
-#items-container {
+#items-container,
+#edit-item-container {
   display: grid;
 }
 
@@ -97,7 +102,8 @@ input[type="submit"] {
 }
 
 #items-block,
-#search-bar-block {
+#search-bar-block,
+#edit-item-container {
   grid-column: 1 / span 2;
 }
 
@@ -151,7 +157,8 @@ input[type="submit"] {
   outline: none;
 }
 
-#items-container {
+#items-container,
+#edit-item-container {
   grid-template-columns: repeat(8, auto) repeat(2, 2em);
 }
 
