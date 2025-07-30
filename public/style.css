@@ -152,7 +152,11 @@ input[type="submit"] {
 }
 
 #items-container {
-  grid-template-columns: repeat(8, auto) repeat(2, 3em);
+  grid-template-columns: repeat(8, auto) repeat(2, 2em);
+}
+
+#items-container i {
+  font-style: normal;
 }
 
 #locations-block {
@@ -167,7 +171,7 @@ li {
   font-weight: bolder;
 }
 
-div[id^="header"] {
+.header {
   border: 1px solid black;
 }
 
