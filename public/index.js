@@ -217,10 +217,41 @@ function generateIcons(icons, id) {
 
     if (icon === "delete") {
       iconElement.textContent = "❌";
-      iconElement.addEventListener("click", () => console.log("delete icon"));
+      iconElement.addEventListener("click", (event) => {
+        const id = event.target.id.split("-")[0];
+
+        // delete the item with the given id from the database
+        deleteOneItem(`${API_BASE_URL}/api/v1/items/${id}`);
+
+        // once item is deleted, re-render items
+        displayFetchedData(`${API_BASE_URL}/api/v1/items`);
+      });
     }
 
     itemsContainer.appendChild(iconElement);
+  }
+}
+
+async function deleteOneItem(url) {
+  const options = {
+    method: "delete",
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Access-Control-Allow-Origin": "*",
+    },
+  };
+
+  try {
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    console.error(error.message);
   }
 }
 
