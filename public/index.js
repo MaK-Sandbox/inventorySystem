@@ -152,9 +152,7 @@ async function displayFetchedData(url) {
   // fetchedData is an array
   // generate a row in the grid for each element within the fetchedData array
   // sort the array before creating grid items
-  fetchedData
-    .sort((a, b) => b.id - a.id)
-    .map((item) => generateGridRows(fetchedData, item));
+  fetchedData.sort((a, b) => b.id - a.id).map((item) => generateGridRows(item));
 }
 
 function generateHeaders(properties) {
@@ -167,7 +165,7 @@ function generateHeaders(properties) {
   });
 }
 
-function generateGridRows(array, object) {
+function generateGridRows(object) {
   for (const key in object) {
     if (Object.prototype.hasOwnProperty.call(object, key)) {
       const element = object[key];
