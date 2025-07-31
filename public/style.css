@@ -165,6 +165,12 @@ input[type="submit"] {
   grid-template-columns: repeat(8, auto) repeat(2, 2em);
 }
 
+#items-container > *,
+#edit-item-container > *,
+#search-results-container > * {
+  padding: 0.25em;
+}
+
 .icon {
   font-style: normal;
 }
