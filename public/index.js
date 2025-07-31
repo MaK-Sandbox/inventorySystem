@@ -40,12 +40,11 @@ form.addEventListener("submit", async (event) => {
   const dataObject = Object.fromEntries(formData);
 
   const payload = JSON.stringify(dataObject);
-  console.log(payload);
 
   const url = `${API_BASE_URL}/api/v1/items`;
 
-  const newObject = await postNewData(url, payload);
-  console.log("newObject:", newObject);
+  const newlyAddedItem = await postNewData(url, payload);
+  console.log("newlyAddedItem:", newlyAddedItem);
 
   displayFetchedData(
     `${API_BASE_URL}/api/v1/items`,
@@ -71,8 +70,8 @@ searchForm.addEventListener("submit", async (event) => {
   const searchUrl = baseURL + searchQuery;
   const encodedURL = encodeURI(searchUrl.toLowerCase());
 
-  const response = await fetchCurrentData(encodedURL);
-  console.log("response", response);
+  const searchResults = await fetchCurrentData(encodedURL);
+  console.log("searchResults", searchResults);
 });
 
 function initializePurchaseDate() {
@@ -94,7 +93,6 @@ async function listLocations() {
 
   // fetch data that we want to display in the grid container
   const locations = await fetchCurrentData(`${API_BASE_URL}/api/v1/locations`);
-  // console.log("locations:", locations);
 
   // Step 1: Create a map object. Use location id as keys and location objects as values.
   // Ensure to add a new property called children in the location objects which has an empty array as its value
@@ -227,7 +225,6 @@ function generateIcons(icons, id, parentElement) {
     if (icon.name === "edit") {
       iconElement.addEventListener("click", async (event) => {
         const id = event.target.id.split("-")[0];
-        console.log("id:", id);
 
         // alternate between which element is visible in the browser and which is hidden
         document.getElementById("items-block").classList.add("hide");
@@ -242,8 +239,6 @@ function generateIcons(icons, id, parentElement) {
 
         // lets get the names for the
         const keys = Object.keys(item);
-
-        console.log("properties", keys);
 
         const icons = [
           { name: "save", emoji: "💾" },
@@ -283,8 +278,6 @@ function generateIcons(icons, id, parentElement) {
 
           if (icon.name === "save") {
             iconElement.addEventListener("click", async () => {
-              console.log("Save!");
-
               const itemObj = {};
               const editedItem = [
                 ...document.querySelectorAll(".item-to-edit"),
@@ -292,22 +285,18 @@ function generateIcons(icons, id, parentElement) {
 
               editedItem.forEach((info) => {
                 const prop = info.id.split("-")[1];
-                console.log(prop);
 
                 if (prop !== "id") {
                   itemObj[prop] = info.value;
                 }
               });
-              console.log("itemObj:", itemObj);
-              console.log("editedItem", editedItem);
 
               const payload = JSON.stringify(itemObj);
-              console.log(payload);
+
               const id = editedItem[0].textContent;
               const url = `${API_BASE_URL}/api/v1/items/${id}`;
 
               const item = await editOneItem(url, payload);
-              console.log("item:", item);
 
               // alternate between which element is visible in the browser and which is hidden
               document.getElementById("items-block").classList.remove("hide");
@@ -326,8 +315,6 @@ function generateIcons(icons, id, parentElement) {
 
           if (icon.name === "cancel") {
             iconElement.addEventListener("click", () => {
-              console.log("Cancel!");
-
               editItemContainer.innerHTML === "";
 
               document.getElementById("items-block").classList.remove("hide");
