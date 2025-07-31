@@ -109,8 +109,8 @@ router.put("/:id", (req, res) => {
     "quantity",
     "location_id",
     "purchase_price",
+    "currency_id",
     "purchase_date",
-    "receipt",
     "freeText",
   ];
 
