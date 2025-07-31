@@ -189,7 +189,14 @@ async function displayFetchedData(url, iconArray, parentElement) {
   // sort the array before creating grid items
   fetchedData
     .sort((a, b) => b.id - a.id)
-    .map((item) => generateGridRows(item, iconArray, parentElement));
+    .map((item) =>
+      generateGridRows(
+        item,
+        iconArray,
+        parentElement,
+        fetchedData[fetchedData.length - 1].id
+      )
+    );
 }
 
 function generateHeaders(properties, icons, parentElement) {
@@ -213,14 +220,14 @@ function generateHeaders(properties, icons, parentElement) {
   }
 }
 
-function generateGridRows(object, icons, parentElement) {
+function generateGridRows(object, icons, parentElement, idOfLastItem) {
   for (const key in object) {
     if (Object.prototype.hasOwnProperty.call(object, key)) {
       const element = object[key];
 
       let newElement = document.createElement("div");
 
-      if (object.id === 1) {
+      if (object.id === idOfLastItem) {
         newElement.classList.add("bottom-item");
       }
 
