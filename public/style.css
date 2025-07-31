@@ -191,10 +191,10 @@ li {
 
 div[id$="id"]:not(div[id="form-grid"]),
 div[id$="name"],
-#items-container > div[id$="quantity"],
-#items-container > div[id$="price"],
-#items-container > div[id$="date"],
-#items-container > div[id$="freeText"],
+div[id$="quantity"],
+div[id$="price"],
+div[id$="date"],
+div[id$="freeText"],
 div[id$="description"] {
   border-left: 1px solid black;
   border-right: 1px solid black;
