@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     `${API_BASE_URL}/api/v1/items`,
     [
       { name: "edit", emoji: "✏️" },
-      { name: "delete", emoji: "❌" },
+      { name: "delete", emoji: "🗑️" },
     ],
     itemsContainer
   );
@@ -215,9 +215,9 @@ function generateIcons(icons, id, parentElement) {
     let iconElement = document.createElement("i");
     iconElement.classList.add("icon");
     iconElement.setAttribute("id", `${id}-${icon.name}`);
+    iconElement.textContent = icon.emoji;
 
     if (icon.name === "edit") {
-      iconElement.textContent = icon.emoji;
       iconElement.addEventListener("click", async (event) => {
         const id = event.target.id.split("-")[0];
         console.log("id:", id);
@@ -225,11 +225,78 @@ function generateIcons(icons, id, parentElement) {
         // alternate between which element is visible in the browser and which is hidden
         document.getElementById("items-block").classList.add("hide");
         document.getElementById("edit-item-block").classList.remove("hide");
+
+        editItemContainer.innerHTML = "";
+
+        // find the item in the database
+        const item = await fetchCurrentData(
+          `${API_BASE_URL}/api/v1/items/${id}`
+        );
+
+        // lets get the names for the
+        const keys = Object.keys(item);
+        const values = Object.values(item);
+
+        console.log("properties", keys);
+        console.log("values:", values);
+
+        const icons = [
+          { name: "save", emoji: "💾" },
+          { name: "cancel", emoji: "❌" },
+        ];
+
+        // we also need an array that describes the type of icons we expect to create for this project
+        generateHeaders(keys, icons, editItemContainer);
+
+        // for each
+        values.forEach((value) => {
+          let inputElement = document.createElement("input");
+          inputElement.type = "text";
+          inputElement.classList.add("edit-item", "bottom-item");
+          inputElement.value = value;
+          inputElement.placeholder = value;
+          editItemContainer.append(inputElement);
+        });
+
+        icons.forEach((icon) => {
+          let iconElement = document.createElement("i");
+          iconElement.classList.add("icon");
+          iconElement.setAttribute("id", `${item.id}-${icon.name}`);
+          iconElement.textContent = icon.emoji;
+
+          if (icon.name === "save") {
+            iconElement.addEventListener("click", () => {
+              console.log("Save!");
+            });
+          }
+
+          if (icon.name === "cancel") {
+            iconElement.addEventListener("click", () => {
+              console.log("Cancel!");
+
+              editItemContainer.innerHTML === "";
+
+              document.getElementById("items-block").classList.remove("hide");
+              document.getElementById("edit-item-block").classList.add("hide");
+
+              // display fetched items
+              displayFetchedData(
+                `${API_BASE_URL}/api/v1/items`,
+                [
+                  { name: "edit", emoji: "✏️" },
+                  { name: "delete", emoji: "🗑️" },
+                ],
+                itemsContainer
+              );
+            });
+          }
+
+          editItemContainer.append(iconElement);
+        });
       });
     }
 
     if (icon.name === "delete") {
-      iconElement.textContent = icon.emoji;
       iconElement.addEventListener("click", (event) => {
         const id = event.target.id.split("-")[0];
 
