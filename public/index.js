@@ -4,6 +4,9 @@ const itemsContainer = document.getElementById("items-container");
 const locationsContainer = document.getElementById("locations-container");
 const locationSelection = document.getElementById("select-location_id");
 const editItemContainer = document.getElementById("edit-item-container");
+const searchResultsContainer = document.getElementById(
+  "search-results-container"
+);
 const purchaseDate = document.getElementById("purchase_date");
 
 // check if in devleopment
@@ -70,8 +73,25 @@ searchForm.addEventListener("submit", async (event) => {
   const searchUrl = baseURL + searchQuery;
   const encodedURL = encodeURI(searchUrl.toLowerCase());
 
-  const searchResults = await fetchCurrentData(encodedURL);
-  console.log("searchResults", searchResults);
+  // alternate between which element is visible in the browser and which is hidden
+  if (!document.getElementById("items-block").classList.contains("hide")) {
+    document.getElementById("items-block").classList.add("hide");
+  }
+
+  if (!document.getElementById("edit-item-block").classList.contains("hide")) {
+    document.getElementById("edit-item-block").classList.add("hide");
+  }
+
+  document.getElementById("search-results-block").classList.remove("hide");
+
+  displayFetchedData(
+    encodedURL,
+    [
+      { name: "edit", emoji: "✏️" },
+      { name: "delete", emoji: "🗑️" },
+    ],
+    searchResultsContainer
+  );
 });
 
 function initializePurchaseDate() {
