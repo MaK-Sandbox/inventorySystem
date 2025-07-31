@@ -47,7 +47,14 @@ form.addEventListener("submit", async (event) => {
   const newObject = await postNewData(url, payload);
   console.log("newObject:", newObject);
 
-  displayFetchedData(`${API_BASE_URL}/api/v1/items`);
+  displayFetchedData(
+    `${API_BASE_URL}/api/v1/items`,
+    [
+      { name: "edit", emoji: "✏️" },
+      { name: "delete", emoji: "🗑️" },
+    ],
+    itemsContainer
+  );
 });
 
 searchForm.addEventListener("submit", async (event) => {
@@ -235,10 +242,8 @@ function generateIcons(icons, id, parentElement) {
 
         // lets get the names for the
         const keys = Object.keys(item);
-        const values = Object.values(item);
 
         console.log("properties", keys);
-        console.log("values:", values);
 
         const icons = [
           { name: "save", emoji: "💾" },
@@ -249,14 +254,26 @@ function generateIcons(icons, id, parentElement) {
         generateHeaders(keys, icons, editItemContainer);
 
         // for each
-        values.forEach((value) => {
-          let inputElement = document.createElement("input");
-          inputElement.type = "text";
-          inputElement.classList.add("edit-item", "bottom-item");
-          inputElement.value = value;
-          inputElement.placeholder = value;
-          editItemContainer.append(inputElement);
-        });
+        for (const key in item) {
+          if (Object.prototype.hasOwnProperty.call(item, key)) {
+            const value = item[key];
+
+            let inputElement;
+
+            if (key === "id") {
+              inputElement = document.createElement("div");
+              inputElement.textContent = value;
+            } else {
+              inputElement = document.createElement("input");
+              inputElement.type = "text";
+              inputElement.value = value;
+              inputElement.placeholder = value;
+            }
+            inputElement.setAttribute("id", `${item.id}-${key}`);
+            inputElement.classList.add("item-to-edit", "bottom-item");
+            editItemContainer.append(inputElement);
+          }
+        }
 
         icons.forEach((icon) => {
           let iconElement = document.createElement("i");
@@ -265,8 +282,45 @@ function generateIcons(icons, id, parentElement) {
           iconElement.textContent = icon.emoji;
 
           if (icon.name === "save") {
-            iconElement.addEventListener("click", () => {
+            iconElement.addEventListener("click", async () => {
               console.log("Save!");
+
+              const itemObj = {};
+              const editedItem = [
+                ...document.querySelectorAll(".item-to-edit"),
+              ];
+
+              editedItem.forEach((info) => {
+                const prop = info.id.split("-")[1];
+                console.log(prop);
+
+                if (prop !== "id") {
+                  itemObj[prop] = info.value;
+                }
+              });
+              console.log("itemObj:", itemObj);
+              console.log("editedItem", editedItem);
+
+              const payload = JSON.stringify(itemObj);
+              console.log(payload);
+              const id = editedItem[0].textContent;
+              const url = `${API_BASE_URL}/api/v1/items/${id}`;
+
+              const item = await editOneItem(url, payload);
+              console.log("item:", item);
+
+              // alternate between which element is visible in the browser and which is hidden
+              document.getElementById("items-block").classList.remove("hide");
+              document.getElementById("edit-item-block").classList.add("hide");
+
+              displayFetchedData(
+                `${API_BASE_URL}/api/v1/items`,
+                [
+                  { name: "edit", emoji: "✏️" },
+                  { name: "delete", emoji: "🗑️" },
+                ],
+                itemsContainer
+              );
             });
           }
 
@@ -308,7 +362,7 @@ function generateIcons(icons, id, parentElement) {
           `${API_BASE_URL}/api/v1/items`,
           [
             { name: "edit", emoji: "✏️" },
-            { name: "delete", emoji: "❌" },
+            { name: "delete", emoji: "🗑️" },
           ],
           itemsContainer
         );
@@ -316,6 +370,29 @@ function generateIcons(icons, id, parentElement) {
     }
 
     parentElement.appendChild(iconElement);
+  }
+}
+
+async function editOneItem(url, payload) {
+  const options = {
+    method: "put",
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+    },
+    body: payload,
+  };
+
+  try {
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    console.error(error.message);
   }
 }
 
@@ -349,7 +426,6 @@ async function postNewData(url, payload) {
       "Content-Type": "application/json; charset=utf-8",
       "Access-Control-Allow-Origin": "*",
     },
-
     body: payload,
   };
 
