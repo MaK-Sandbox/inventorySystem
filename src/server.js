@@ -21,11 +21,13 @@ app.use(cors());
 import itemsRouter from "./routes/Items.js";
 import locationsRouter from "./routes/Locations.js";
 import searchRouter from "./routes/Search.js";
+import documentsRouter from "./routes/Documents.js";
 
 // Use imported routers
 app.use("/api/v1/items", itemsRouter);
 app.use("/api/v1/locations", locationsRouter);
 app.use("/search", searchRouter);
+app.use("/api/v1/documents", documentsRouter);
 
 app.get("/", (req, res) => {
   res.send("Test route");
