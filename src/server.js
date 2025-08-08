@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import fileUpload from "express-fileupload";
 
 // Initialize Express app
 const app = express();
@@ -16,6 +17,7 @@ if (process.env.NODE_ENV === "development") {
 app.use(express.json());
 app.use(express.static("public"));
 app.use(cors());
+app.use(fileUpload());
 
 // Import and initialize routers
 import itemsRouter from "./routes/Items.js";
