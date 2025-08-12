@@ -5,38 +5,29 @@ import db from "../db.js";
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  const items = db.prepare("SELECT * FROM items").all();
-  res.send(items);
+  const locations = db.prepare("SELECT * FROM locations").all();
+  res.send(locations);
 });
 
 router.get("/:id", (req, res) => {
   const id = req.params["id"];
 
   // Step 1: Check if an item with the given id even exists in the database
-  const item = db.prepare("SELECT * FROM items WHERE id = ?").get(id);
+  const location = db.prepare("SELECT * FROM locations WHERE id = ?").get(id);
 
   // If such item does not exist, return an error message back to the user
-  if (!item) {
+  if (!location) {
     res
       .status(400)
       .send("An item with the provided id does not exist in the database");
     return;
   }
-
-  res.send(item);
+  res.send(location);
 });
 
 router.post("/", (req, res) => {
   // Validate properties
-  const allowedProperties = [
-    "name",
-    "quantity",
-    "location_id",
-    "purchase_price",
-    "currency_id",
-    "purchase_date",
-    "freeText",
-  ];
+  const allowedProperties = ["name", "parent_id", "description"];
 
   // Step 1: Check if a request body was provided. If not, return an error message back to the user
   if (Object.keys(req.body).length === 0) {
@@ -45,10 +36,10 @@ router.post("/", (req, res) => {
   }
 
   // Step 2: Validate and filter properties
-  const insertData = {};
+  const insertData: Record<string, any> = {};
   for (const key in req.body) {
     if (Object.prototype.hasOwnProperty.call(req.body, key)) {
-      const value = req.body[key];
+      const value = req.body[key] as string;
 
       // If an illegal property is detected, return an error message to the user
       if (!allowedProperties.includes(key)) {
@@ -64,9 +55,7 @@ router.post("/", (req, res) => {
   const validatedValues = Object.values(insertData);
 
   const insertStatement = db.prepare(
-    `INSERT INTO items (${validatedProperties.join(
-      ", "
-    )}) VALUES (?, ?, ?, ?, ?, ?, ?)`
+    `INSERT INTO locations (${validatedProperties.join(", ")}) VALUES (?, ?, ?)`
   );
 
   const info = insertStatement.run(...validatedValues);
@@ -77,23 +66,25 @@ router.post("/", (req, res) => {
     return;
   }
 
-  const newItemId = info.lastInsertRowid;
+  const newLocationId = info.lastInsertRowid;
 
   // Return the newly created item
-  res.json(db.prepare("SELECT * FROM items WHERE id = ?").get(newItemId));
+  res.json(
+    db.prepare("SELECT * FROM locations WHERE id = ?").get(newLocationId)
+  );
 });
 
 router.put("/:id", (req, res) => {
   const id = req.params.id;
 
-  // Step 1: Check if an item with the given id even exists in the database
-  const item = db.prepare("SELECT * FROM items WHERE id = ?").get(id);
+  // Step 1: Check if a location with the given id even exists in the database
+  const location = db.prepare("SELECT * FROM locations WHERE id = ?").get(id);
 
-  // If such item does not exist, return an error message back to the user
-  if (!item) {
+  // If such location does not exist, return an error message back to the user
+  if (!location) {
     res
       .status(400)
-      .send("An item with the provided id does not exist in the database");
+      .send("A location with the provided id does not exist in the database");
     return;
   }
 
@@ -104,15 +95,7 @@ router.put("/:id", (req, res) => {
   }
 
   // Step 3: Ensure that only allowed properties are processed
-  const allowedProperties = [
-    "name",
-    "quantity",
-    "location_id",
-    "purchase_price",
-    "currency_id",
-    "purchase_date",
-    "freeText",
-  ];
+  const allowedProperties = ["name", "parent_id", "description"];
 
   for (const key in req.body) {
     if (Object.prototype.hasOwnProperty.call(req.body, key)) {
@@ -125,33 +108,32 @@ router.put("/:id", (req, res) => {
       }
 
       const updateStatement = db.prepare(
-        `UPDATE items SET ${key} = ? WHERE id = ?`
+        `UPDATE locations SET ${key} = ? WHERE id = ?`
       );
       updateStatement.run(element, id);
     }
   }
-
-  res.json(db.prepare("SELECT * FROM items WHERE id = ?").get(id));
+  res.json(db.prepare("SELECT * FROM locations WHERE id = ?").get(id));
 });
 
 router.delete("/:id", (req, res) => {
   const id = req.params.id;
 
-  // Step 1: Check if an item with the given id even exists in the database
-  const item = db.prepare("SELECT * FROM items WHERE id = ?").get(id);
+  // Step 1: Check if an location with the given id even exists in the database
+  const location = db.prepare("SELECT * FROM locations WHERE id = ?").get(id);
 
-  // If such item does not exist, return an error message back to the user
-  if (!item) {
+  // If such location does not exist, return an error message back to the user
+  if (!location) {
     res
       .status(400)
-      .send("An item with the provided id does not exist in the database");
+      .send("A location with the provided id does not exist in the database");
     return;
   }
 
-  // Step 2: If item does exist, delete the item from the database
-  db.prepare("DELETE FROM items WHERE id = ?").run(id);
+  // Step 2: If such location does exist, delete the locaion from the database
+  db.prepare("DELETE FROM locations WHERE id = ?").run(id);
 
-  res.status(200).json(item);
+  res.status(200).json(location);
 });
 
 export default router;
