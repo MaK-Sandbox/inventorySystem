@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "outDir": "./built",
+    "allowJs": true,
+    "module": "nodenext",
+    "target": "esnext",
+    "noEmitOnError": true,
+    "noImplicitAny": true,
+    "esModuleInterop": true,
+  },
+  "include": ["./src/**/*"]
+}

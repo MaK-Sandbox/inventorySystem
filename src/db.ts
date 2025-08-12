@@ -5,7 +5,7 @@ if (!process.env.DB_FILE) {
   process.exit(1);
 }
 
-let db;
+let db: Database.Database;
 
 if (!db) {
   db = new Database(process.env.DB_FILE);

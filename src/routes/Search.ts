@@ -5,8 +5,8 @@ import db from "../db.js";
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  const location_id = req.query["select"];
-  const search_input = req.query["search_input"];
+  const location_id = req.query["select"] as string;
+  const search_input = req.query["search_input"] as string;
 
   // in case an empty input field is given, return all items in with the given location_id
   if (search_input === "") {
@@ -18,10 +18,10 @@ router.get("/", (req, res) => {
     return;
   } else {
     // let us collect all search words typed into the input field in the frontend and store them in array
-    const searchWords = [];
+    const searchWords: string[] = [];
 
     // add search words one by one to searchWords in the format required for our sql statement
-    search_input.split(" ").forEach((word) => {
+    search_input.split(" ").forEach((word: string) => {
       searchWords.push(`%${word}%`);
     });
 
