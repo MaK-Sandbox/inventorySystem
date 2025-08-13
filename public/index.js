@@ -112,7 +112,7 @@ async function listLocations() {
   locationsContainer.innerHTML = "";
 
   // fetch data that we want to display in the grid container
-  const locations = await fetchCurrentData(`${API_BASE_URL}/api/v1/locations`);
+  const locations = await getItems(`${API_BASE_URL}/api/v1/locations`);
 
   // Step 1: Create a map object. Use location id as keys and location objects as values.
   // Ensure to add a new property called children in the location objects which has an empty array as its value
@@ -160,7 +160,7 @@ async function displayLocationSelection() {
   locationSelection.innerHTML = "";
 
   // fetch data that we want to display in the grid container
-  const locations = await fetchCurrentData(`${API_BASE_URL}/api/v1/locations`);
+  const locations = await getItems(`${API_BASE_URL}/api/v1/locations`);
 
   locations.forEach((location) => {
     let option = document.createElement("option");
@@ -176,7 +176,7 @@ async function displayFetchedData(url, iconArray, parentElement) {
   parentElement.innerHTML = "";
 
   // fetch data that we want to display in the grid container
-  const fetchedData = await fetchCurrentData(url);
+  const fetchedData = await getItems(url);
 
   // generate headers
   const properties = Object.keys(fetchedData[0]);
@@ -260,9 +260,7 @@ function generateIcons(icons, id, parentElement) {
         editItemContainer.innerHTML = "";
 
         // find the item in the database
-        const item = await fetchCurrentData(
-          `${API_BASE_URL}/api/v1/items/${id}`
-        );
+        const item = await getItems(`${API_BASE_URL}/api/v1/items/${id}`);
 
         // lets get the names for the
         const keys = Object.keys(item);
@@ -457,7 +455,7 @@ async function postNewData(url, payload) {
   }
 }
 
-async function fetchCurrentData(url) {
+async function getItems(url) {
   const options = {
     headers: {
       "Content-Type": "application/json; charset=utf-8",
