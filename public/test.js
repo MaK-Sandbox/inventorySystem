@@ -40,9 +40,11 @@ itemsBtn.addEventListener("click", async () => {
     }
 
     // next, generate grid data rows
-    items.forEach((item) => {
-      generateGridElements(item, gridContainer);
-    });
+    items
+      .sort((a, b) => b.id - a.id)
+      .forEach((item) => {
+        generateGridElements(item, gridContainer);
+      });
   }
 
   mainContent.appendChild(gridContainer);
@@ -66,7 +68,7 @@ function generateGridElements(itemObj, parentElement) {
       const value = itemObj[key];
 
       const gridElement = document.createElement("div");
-      gridElement.setAttribute("id", `${itemObj.id}-${value}`);
+      gridElement.setAttribute("id", `${itemObj.id}-${key}`);
       gridElement.textContent = value;
       parentElement.appendChild(gridElement);
     }
@@ -77,7 +79,7 @@ function generateHeaders(arrayOfHeaderTitles, parentElement) {
   // generate a header element for each
   arrayOfHeaderTitles.forEach((headerTitle) => {
     const gridHeader = document.createElement("div");
-    gridHeader.getAttribute("id", `header-${headerTitle}`);
+    gridHeader.setAttribute("id", `header-${headerTitle}`);
     gridHeader.textContent = headerTitle;
     parentElement.appendChild(gridHeader);
   });
