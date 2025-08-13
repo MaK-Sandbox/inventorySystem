@@ -17,10 +17,35 @@ window.addEventListener("load", () => {
 });
 
 // create event hadnlers for each button
-itemsBtn.addEventListener("click", () => {
+itemsBtn.addEventListener("click", async () => {
   mainContent.innerHTML = "";
 
-  mainContent.textContent = "Items";
+  // fetch current items in the inventory from the backend
+  const items = await getItems(`${API_BASE_URL}/api/v1/items`);
+
+  // create an element with id items_container and begin to add children to it
+  const gridContainer = document.createElement("div");
+  gridContainer.setAttribute("id", "items_container");
+
+  // check if items is undefined
+  if (items.length < 1) {
+    gridContainer.textContent = "No items found";
+  } else {
+    // get the properties/keys from the first object in the items array
+    const keys = Object.keys(items[0]);
+
+    // for each key, generate a grid element
+    if (keys.length > 0) {
+      generateHeaders(keys, gridContainer);
+    }
+
+    // next, generate grid data rows
+    items.forEach((item) => {
+      generateGridElements(item, gridContainer);
+    });
+  }
+
+  mainContent.appendChild(gridContainer);
 });
 
 addItemBtn.addEventListener("click", () => {
@@ -34,3 +59,48 @@ documentsBtn.addEventListener("click", () => {
 
   mainContent.textContent = "Documents";
 });
+
+function generateGridElements(itemObj, parentElement) {
+  for (const key in itemObj) {
+    if (Object.prototype.hasOwnProperty.call(itemObj, key)) {
+      const value = itemObj[key];
+
+      const gridElement = document.createElement("div");
+      gridElement.setAttribute("id", `${itemObj.id}-${value}`);
+      gridElement.textContent = value;
+      parentElement.appendChild(gridElement);
+    }
+  }
+}
+
+function generateHeaders(arrayOfHeaderTitles, parentElement) {
+  // generate a header element for each
+  arrayOfHeaderTitles.forEach((headerTitle) => {
+    const gridHeader = document.createElement("div");
+    gridHeader.getAttribute("id", `header-${headerTitle}`);
+    gridHeader.textContent = headerTitle;
+    parentElement.appendChild(gridHeader);
+  });
+}
+
+async function getItems(url) {
+  const options = {
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Access-Control-Allow-Origin": "*",
+    },
+  };
+
+  try {
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    console.error(error.message);
+  }
+}
