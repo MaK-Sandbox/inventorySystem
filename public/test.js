@@ -21,7 +21,7 @@ itemsBtn.addEventListener("click", async () => {
   mainContent.innerHTML = "";
 
   // create h1-heading
-  generateHeading("Items", mainContent);
+  generateHeading("Items");
 
   // fetch current items in the inventory from the backend
   const items = await getItems(`${API_BASE_URL}/api/v1/items`);
@@ -88,11 +88,11 @@ function generateHeaders(arrayOfHeaderTitles, parentElement) {
   });
 }
 
-function generateHeading(text, parentElement) {
+function generateHeading(text) {
   const h1 = document.createElement("h1");
   h1.classList.add("h1-heading");
   h1.textContent = text;
-  parentElement.appendChild(h1);
+  mainContent.appendChild(h1);
 }
 
 async function getItems(url) {
