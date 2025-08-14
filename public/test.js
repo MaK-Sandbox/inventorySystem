@@ -20,6 +20,9 @@ window.addEventListener("load", () => {
 itemsBtn.addEventListener("click", async () => {
   mainContent.innerHTML = "";
 
+  // create h1-heading
+  generateHeading("Items", mainContent);
+
   // fetch current items in the inventory from the backend
   const items = await getItems(`${API_BASE_URL}/api/v1/items`);
 
@@ -83,6 +86,13 @@ function generateHeaders(arrayOfHeaderTitles, parentElement) {
     gridHeader.textContent = headerTitle;
     parentElement.appendChild(gridHeader);
   });
+}
+
+function generateHeading(text, parentElement) {
+  const h1 = document.createElement("h1");
+  h1.classList.add("h1-heading");
+  h1.textContent = text;
+  parentElement.appendChild(h1);
 }
 
 async function getItems(url) {
