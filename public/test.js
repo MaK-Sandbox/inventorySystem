@@ -53,7 +53,7 @@ itemsBtn.addEventListener("click", async () => {
   mainContent.appendChild(gridContainer);
 });
 
-addItemBtn.addEventListener("click", () => {
+addItemBtn.addEventListener("click", async () => {
   mainContent.innerHTML = "";
 
   // create h1-heading
@@ -129,6 +129,16 @@ addItemBtn.addEventListener("click", () => {
   submitBtn.setAttribute("type", "submit");
   submitBtn.value = "Add item ➕";
   addItemsForm.appendChild(submitBtn);
+
+  // lastly, we want to list the locations available as the second component in #flex_container
+  const locationsContainer = document.createElement("div");
+  flexContainer.appendChild(locationsContainer);
+
+  const nestedHTML = await listLocations();
+  locationsContainer.innerHTML = nestedHTML;
+
+  // display location options in the location selection
+  // displayLocationSelection();
 });
 
 documentsBtn.addEventListener("click", () => {
@@ -195,6 +205,52 @@ function initializePurchaseDate() {
 function addZero(i) {
   if (i < 10) return `0${i}`;
   return i;
+}
+
+async function listLocations() {
+  // fetch data that we want to display in the grid container
+  const locations = await getData(`${API_BASE_URL}/api/v1/locations`);
+
+  // Step 1: Create a map object. Use location id as keys and location objects as values.
+  // Ensure to add a new property called children in the location objects which has an empty array as its value
+  const map = new Map();
+  locations.forEach((location) => {
+    map.set(location.id, { ...location, children: [] });
+  });
+
+  // Step 2: Create an empty root array for top-level nodes
+  const roots = [];
+
+  // Step 3: Build the tree by linking children to their parent
+  locations.forEach((location) => {
+    if (location.parent_id === null) {
+      roots.push(map.get(location.id));
+    } else {
+      const parent = map.get(location.parent_id);
+      // map.get() will return undefined if the sought after value does not exist
+      // if the parent exists, add the location.id of the child to the children array
+      if (parent) {
+        parent.children.push(map.get(location.id));
+      }
+    }
+  });
+
+  // Step 4: Recursively render the nested unordered list
+  function renderList(locations) {
+    let html = "<ul>";
+    for (const location of locations) {
+      html += `<li>id: ${location.id} - ${location.name}`;
+      if (location.children.length > 0) {
+        html += renderList(location.children);
+      }
+      html += "</li>";
+    }
+    html += "</ul>";
+    return html;
+  }
+
+  // Step 5: Render the final html
+  return renderList(roots);
 }
 
 function generateGridElements(itemObj, parentElement) {
