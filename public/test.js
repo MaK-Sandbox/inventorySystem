@@ -159,6 +159,7 @@ addItemBtn.addEventListener("click", async () => {
 
   // lastly, we want to list the locations available as the second component in #flex_container
   const locationsContainer = document.createElement("div");
+  locationsContainer.setAttribute("id", "locations_list");
   flexContainer.appendChild(locationsContainer);
 
   const nestedHTML = await listLocations();

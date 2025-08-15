@@ -48,3 +48,8 @@ input[type="number"] {
   grid-template-columns: 10em 25em;
   row-gap: 0.25em;
 }
+
+#locations_list li {
+  list-style-position: inside;
+  padding-left: 1em;
+}
