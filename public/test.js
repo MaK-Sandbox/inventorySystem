@@ -124,6 +124,7 @@ addItemBtn.addEventListener("click", async () => {
 
   // we also want a grid container where new items can be listed as they are added to the inventory
   const newlyAddedItemsContainer = document.createElement("div");
+  newlyAddedItemsContainer.setAttribute("id", "new_added_items_container");
   mainContent.appendChild(newlyAddedItemsContainer);
 
   // lets store newly added items, just temporarily

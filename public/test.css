@@ -10,7 +10,7 @@ body {
   padding: 0.5em;
 }
 
-#items_container {
+#items_container, #new_added_items_container {
   display: grid;
   grid-template-columns: repeat(8, auto);
 }
