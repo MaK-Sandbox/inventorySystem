@@ -23,7 +23,7 @@ input[type="number"] {
 }
 
 #items_container,
-#grid_container,
+#form_grid,
 #new_added_items_container {
   display: grid;
   grid-template-columns: repeat(8, auto);
@@ -44,7 +44,7 @@ input[type="number"] {
   gap: 1em;
 }
 
-#grid_container {
+#form_grid {
   grid-template-columns: 10em 25em;
   row-gap: 0.25em;
 }

@@ -74,7 +74,7 @@ addItemBtn.addEventListener("click", async () => {
 
   // create a grid container for label and input pairs inside of #add_items_form
   const gridContainer = document.createElement("div");
-  gridContainer.setAttribute("id", "grid_container");
+  gridContainer.setAttribute("id", "form_grid");
   addItemsForm.appendChild(gridContainer);
 
   // lets add content to the form element
