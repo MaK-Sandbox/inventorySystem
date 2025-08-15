@@ -184,18 +184,22 @@ documentsBtn.addEventListener("click", () => {
   addDocForm.setAttribute("action", "/api/v1/documents/upload");
   mainContent.appendChild(addDocForm);
 
+  const formGrid = document.createElement("div");
+  formGrid.setAttribute("id", "form_grid");
+  addDocForm.appendChild(formGrid);
+
   // add content for #add_items_form
   const label = document.createElement("label");
   label.textContent = "Upload file:";
   label.setAttribute("for", "file");
-  addDocForm.appendChild(label);
+  formGrid.appendChild(label);
 
   const inputTypeFile = document.createElement("input");
   inputTypeFile.setAttribute("type", "file");
   inputTypeFile.setAttribute("id", "file");
   inputTypeFile.setAttribute("name", "file");
   inputTypeFile.setAttribute("multiple", true);
-  addDocForm.appendChild(inputTypeFile);
+  formGrid.appendChild(inputTypeFile);
 
   const inputTypeSubmit = document.createElement("input");
   inputTypeSubmit.setAttribute("type", "submit");
