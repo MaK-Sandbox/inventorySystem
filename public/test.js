@@ -24,7 +24,7 @@ itemsBtn.addEventListener("click", async () => {
   generateHeading("Items");
 
   // fetch current items in the inventory from the backend
-  const items = await getItems(`${API_BASE_URL}/api/v1/items`);
+  const items = await getData(`${API_BASE_URL}/api/v1/items`);
 
   // create an element with id items_container and begin to add children to it
   const gridContainer = document.createElement("div");
@@ -227,7 +227,7 @@ function generateHeading(text) {
   mainContent.appendChild(h1);
 }
 
-async function getItems(url) {
+async function getData(url) {
   const options = {
     headers: {
       "Content-Type": "application/json; charset=utf-8",
