@@ -58,10 +58,20 @@ addItemBtn.addEventListener("click", () => {
 
   // create h1-heading
   generateHeading("Add item");
+});
+
+documentsBtn.addEventListener("click", () => {
+  mainContent.innerHTML = "";
+
+  // create h1-heading
+  generateHeading("Documents");
 
   // create an element with id add_items_form and begin to add children to it
   const addItemForm = document.createElement("form");
   addItemForm.setAttribute("id", "add_items_form");
+  addItemForm.setAttribute("method", "post");
+  addItemForm.setAttribute("enctype", "multipart/form-data");
+  addItemForm.setAttribute("action", "/api/v1/documents/upload");
   mainContent.appendChild(addItemForm);
 
   // add content for #add_items_form
@@ -81,18 +91,6 @@ addItemBtn.addEventListener("click", () => {
   inputTypeSubmit.setAttribute("type", "submit");
   inputTypeSubmit.value = "Submit";
   addItemForm.appendChild(inputTypeSubmit);
-
-  /**
-   *  <label for="file">Upload file:</label>
-      <input type="file" id="file" name="file" multiple/>
-      <input type="submit" value="Submit" />
-   */
-});
-
-documentsBtn.addEventListener("click", () => {
-  mainContent.innerHTML = "";
-
-  mainContent.textContent = "Documents";
 });
 
 function generateGridElements(itemObj, parentElement) {
