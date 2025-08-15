@@ -67,30 +67,30 @@ documentsBtn.addEventListener("click", () => {
   generateHeading("Documents");
 
   // create an element with id add_items_form and begin to add children to it
-  const addItemForm = document.createElement("form");
-  addItemForm.setAttribute("id", "add_items_form");
-  addItemForm.setAttribute("method", "post");
-  addItemForm.setAttribute("enctype", "multipart/form-data");
-  addItemForm.setAttribute("action", "/api/v1/documents/upload");
-  mainContent.appendChild(addItemForm);
+  const addDocForm = document.createElement("form");
+  addDocForm.setAttribute("id", "add_items_form");
+  addDocForm.setAttribute("method", "post");
+  addDocForm.setAttribute("enctype", "multipart/form-data");
+  addDocForm.setAttribute("action", "/api/v1/documents/upload");
+  mainContent.appendChild(addDocForm);
 
   // add content for #add_items_form
   const label = document.createElement("label");
   label.textContent = "Upload file:";
   label.setAttribute("for", "file");
-  addItemForm.appendChild(label);
+  addDocForm.appendChild(label);
 
   const inputTypeFile = document.createElement("input");
   inputTypeFile.setAttribute("type", "file");
   inputTypeFile.setAttribute("id", "file");
   inputTypeFile.setAttribute("name", "file");
   inputTypeFile.setAttribute("multiple", true);
-  addItemForm.appendChild(inputTypeFile);
+  addDocForm.appendChild(inputTypeFile);
 
   const inputTypeSubmit = document.createElement("input");
   inputTypeSubmit.setAttribute("type", "submit");
   inputTypeSubmit.value = "Submit";
-  addItemForm.appendChild(inputTypeSubmit);
+  addDocForm.appendChild(inputTypeSubmit);
 });
 
 function generateGridElements(itemObj, parentElement) {
