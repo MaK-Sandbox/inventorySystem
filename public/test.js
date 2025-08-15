@@ -69,8 +69,7 @@ addItemBtn.addEventListener("click", async () => {
   const addItemsForm = document.createElement("form");
   addItemsForm.setAttribute("id", "add_items_form");
   addItemsForm.setAttribute("method", "post");
-  addItemsForm.setAttribute("enctype", "multipart/form-data");
-  addItemsForm.setAttribute("action", "/api/v1/items");
+  addItemsForm.setAttribute("action", "");
   flexContainer.appendChild(addItemsForm);
 
   // create a grid container for label and input pairs inside of #add_items_form
@@ -123,11 +122,38 @@ addItemBtn.addEventListener("click", async () => {
     gridContainer
   );
 
+  // we also want a grid container where new items can be listed as they are added to the inventory
+  const newlyAddedItemsContainer = document.createElement("div");
+  mainContent.appendChild(newlyAddedItemsContainer);
+
+  // lets store newly added items, just temporarily
+  const newlyAddedItems = [];
+
   // lastly, create a submit button
   const submitBtn = document.createElement("input");
   submitBtn.setAttribute("id", "submit_item_btn");
   submitBtn.setAttribute("type", "submit");
   submitBtn.value = "Add item ➕";
+  submitBtn.addEventListener("click", async (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(addItemsForm);
+    const dataObject = Object.fromEntries(formData);
+    const payload = JSON.stringify(dataObject);
+
+    const url = `${API_BASE_URL}/api/v1/items`;
+    const newItem = await postData(url, payload);
+    newlyAddedItems.push(newItem);
+
+    // in case that our newlyAddedItems array only consists of one item, generate headers also
+    if (newlyAddedItems.length === 1) {
+      const keys = Object.keys(newItem);
+      generateHeaders(keys, newlyAddedItemsContainer);
+    }
+
+    // add the new item to newlyAddedItemsContainer
+    generateGridElements(newItem, newlyAddedItemsContainer);
+  });
   addItemsForm.appendChild(submitBtn);
 
   // lastly, we want to list the locations available as the second component in #flex_container
@@ -278,6 +304,30 @@ function generateHeading(text) {
   h1.classList.add("h1-heading");
   h1.textContent = text;
   mainContent.appendChild(h1);
+}
+
+async function postData(url, payload) {
+  const options = {
+    method: "post",
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Access-Control-Allow-Origin": "*",
+    },
+    body: payload,
+  };
+
+  try {
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    console.error(error.message);
+  }
 }
 
 async function getData(url) {
