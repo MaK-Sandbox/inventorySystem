@@ -21,7 +21,7 @@ itemsBtn.addEventListener("click", async () => {
   mainContent.innerHTML = "";
 
   // create h1-heading
-  generateHeading("Items", mainContent);
+  generateHeading("Current items", mainContent);
 
   // fetch current items in the inventory from the backend
   const items = await getData(`${API_BASE_URL}/api/v1/items`);
