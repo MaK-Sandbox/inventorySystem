@@ -21,7 +21,7 @@ itemsBtn.addEventListener("click", async () => {
   mainContent.innerHTML = "";
 
   // create h1-heading
-  generateHeading("Items");
+  generateHeading("Items", mainContent);
 
   // fetch current items in the inventory from the backend
   const items = await getData(`${API_BASE_URL}/api/v1/items`);
@@ -56,9 +56,6 @@ itemsBtn.addEventListener("click", async () => {
 addItemBtn.addEventListener("click", async () => {
   mainContent.innerHTML = "";
 
-  // create h1-heading
-  generateHeading("Add item");
-
   // the page will consist of two components that should ideally be placed side by side
   // therefore we need a flex-container
   const flexContainer = document.createElement("div");
@@ -71,6 +68,9 @@ addItemBtn.addEventListener("click", async () => {
   addItemsForm.setAttribute("method", "post");
   addItemsForm.setAttribute("action", "");
   flexContainer.appendChild(addItemsForm);
+
+  // add an h1-heading
+  generateHeading("Add a new item", addItemsForm);
 
   // create a grid container for label and input pairs inside of #add_items_form
   const gridContainer = document.createElement("div");
@@ -162,15 +162,19 @@ addItemBtn.addEventListener("click", async () => {
   locationsContainer.setAttribute("id", "locations_list");
   flexContainer.appendChild(locationsContainer);
 
+  // add an h1-heading
+  generateHeading("List of locations", locationsContainer);
+
+  // list locations currently existing in the backend
   const nestedHTML = await listLocations();
-  locationsContainer.innerHTML = nestedHTML;
+  locationsContainer.innerHTML += nestedHTML;
 });
 
 documentsBtn.addEventListener("click", () => {
   mainContent.innerHTML = "";
 
   // create h1-heading
-  generateHeading("Documents");
+  generateHeading("Documents", mainContent);
 
   // create an element with id add_docs_form and begin to add children to it
   const addDocForm = document.createElement("form");
@@ -301,11 +305,11 @@ function generateHeaders(arrayOfHeaderTitles, parentElement) {
   });
 }
 
-function generateHeading(text) {
+function generateHeading(text, parentElement) {
   const h1 = document.createElement("h1");
   h1.classList.add("h1-heading");
   h1.textContent = text;
-  mainContent.appendChild(h1);
+  parentElement.appendChild(h1);
 }
 
 async function postData(url, payload) {
