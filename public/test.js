@@ -136,9 +136,6 @@ addItemBtn.addEventListener("click", async () => {
 
   const nestedHTML = await listLocations();
   locationsContainer.innerHTML = nestedHTML;
-
-  // display location options in the location selection
-  // displayLocationSelection();
 });
 
 documentsBtn.addEventListener("click", () => {
