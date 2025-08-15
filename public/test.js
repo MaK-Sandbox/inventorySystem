@@ -174,7 +174,7 @@ documentsBtn.addEventListener("click", () => {
   mainContent.innerHTML = "";
 
   // create h1-heading
-  generateHeading("Documents", mainContent);
+  generateHeading("Add a new document", mainContent);
 
   // create an element with id add_docs_form and begin to add children to it
   const addDocForm = document.createElement("form");
