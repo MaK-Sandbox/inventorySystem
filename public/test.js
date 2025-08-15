@@ -73,44 +73,62 @@ addItemBtn.addEventListener("click", () => {
   addItemsForm.setAttribute("action", "/api/v1/items");
   flexContainer.appendChild(addItemsForm);
 
+  // create a grid container for label and input pairs inside of #add_items_form
+  const gridContainer = document.createElement("div");
+  gridContainer.setAttribute("id", "grid_container");
+  addItemsForm.appendChild(gridContainer);
+
   // lets add content to the form element
-  generateLabelInputPairs("name", "Name:", "text", "Desk Chair", addItemsForm);
-  generateLabelInputPairs("quantity", "Quantity:", "number", "1", addItemsForm);
+  generateLabelInputPairs("name", "Name:", "text", "Desk Chair", gridContainer);
+  generateLabelInputPairs(
+    "quantity",
+    "Quantity:",
+    "number",
+    "1",
+    gridContainer
+  );
   generateLabelInputPairs(
     "location_id",
     "Location id:",
     "number",
     "1",
-    addItemsForm
+    gridContainer
   );
   generateLabelInputPairs(
     "purchase_price",
     "Purchase prise:",
     "number",
     "50",
-    addItemsForm
+    gridContainer
   );
   generateLabelInputPairs(
     "currency_id",
     "Currency id:",
     "number",
     "1",
-    addItemsForm
+    gridContainer
   );
   generateLabelInputPairs(
     "purchase_date",
     "Purchase date:",
     "text",
     "",
-    addItemsForm
+    gridContainer
   );
   generateLabelInputPairs(
     "freeText",
     "Free text:",
     "text",
     "optional: add text here",
-    addItemsForm
+    gridContainer
   );
+
+  // lastly, create a submit button
+  const submitBtn = document.createElement("input");
+  submitBtn.setAttribute("id", "submit_item_btn");
+  submitBtn.setAttribute("type", "submit");
+  submitBtn.value = "Add item ➕";
+  addItemsForm.appendChild(submitBtn);
 });
 
 documentsBtn.addEventListener("click", () => {
