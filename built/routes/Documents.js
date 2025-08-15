@@ -15,6 +15,6 @@ router.post("/upload", async (req, res) => {
     const documentPath = path.join(process.env.DOC_DIR, files[0].name);
     const data = files[0].data;
     await fs.writeFile(documentPath, data);
-    res.json({ msg: "OK" });
+    res.status(200).json({ path: documentPath });
 });
 export default router;
