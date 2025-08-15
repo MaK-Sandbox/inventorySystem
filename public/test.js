@@ -58,6 +58,59 @@ addItemBtn.addEventListener("click", () => {
 
   // create h1-heading
   generateHeading("Add item");
+
+  // the page will consist of two components that should ideally be placed side by side
+  // therefore we need a flex-container
+  const flexContainer = document.createElement("div");
+  flexContainer.setAttribute("id", "flex_container");
+  mainContent.appendChild(flexContainer);
+
+  // the first child component that we want inside of #flex_container is a form element
+  const addItemsForm = document.createElement("form");
+  addItemsForm.setAttribute("id", "add_items_form");
+  addItemsForm.setAttribute("method", "post");
+  addItemsForm.setAttribute("enctype", "multipart/form-data");
+  addItemsForm.setAttribute("action", "/api/v1/items");
+  flexContainer.appendChild(addItemsForm);
+
+  // lets add content to the form element
+  generateLabelInputPairs("name", "Name:", "text", "Desk Chair", addItemsForm);
+  generateLabelInputPairs("quantity", "Quantity:", "number", "1", addItemsForm);
+  generateLabelInputPairs(
+    "location_id",
+    "Location id:",
+    "number",
+    "1",
+    addItemsForm
+  );
+  generateLabelInputPairs(
+    "purchase_price",
+    "Purchase prise:",
+    "number",
+    "50",
+    addItemsForm
+  );
+  generateLabelInputPairs(
+    "currency_id",
+    "Currency id:",
+    "number",
+    "1",
+    addItemsForm
+  );
+  generateLabelInputPairs(
+    "purchase_date",
+    "Purchase date:",
+    "text",
+    "",
+    addItemsForm
+  );
+  generateLabelInputPairs(
+    "freeText",
+    "Free text:",
+    "text",
+    "optional: add text here",
+    addItemsForm
+  );
 });
 
 documentsBtn.addEventListener("click", () => {
@@ -66,9 +119,9 @@ documentsBtn.addEventListener("click", () => {
   // create h1-heading
   generateHeading("Documents");
 
-  // create an element with id add_items_form and begin to add children to it
+  // create an element with id add_docs_form and begin to add children to it
   const addDocForm = document.createElement("form");
-  addDocForm.setAttribute("id", "add_items_form");
+  addDocForm.setAttribute("id", "add_docs_form");
   addDocForm.setAttribute("method", "post");
   addDocForm.setAttribute("enctype", "multipart/form-data");
   addDocForm.setAttribute("action", "/api/v1/documents/upload");
@@ -92,6 +145,39 @@ documentsBtn.addEventListener("click", () => {
   inputTypeSubmit.value = "Submit";
   addDocForm.appendChild(inputTypeSubmit);
 });
+
+function generateLabelInputPairs(name, text, type, placeholder, parentElement) {
+  const label = document.createElement("label");
+  label.setAttribute("for", name);
+  label.textContent = text;
+  parentElement.appendChild(label);
+
+  const input = document.createElement("input");
+
+  if (name === "purchase_date") {
+    input.value = initializePurchaseDate();
+  }
+
+  input.setAttribute("id", name);
+  input.setAttribute("name", name);
+  input.setAttribute("type", type);
+  input.setAttribute("placeholder", placeholder);
+  parentElement.appendChild(input);
+}
+
+function initializePurchaseDate() {
+  const d = new Date();
+  let year = d.getFullYear();
+  let month = addZero(d.getMonth() + 1);
+  let date = addZero(d.getDate());
+  let hour = addZero(d.getHours());
+  return `${year}-${month}-${date} ${hour}:00:00`;
+}
+
+function addZero(i) {
+  if (i < 10) return `0${i}`;
+  return i;
+}
 
 function generateGridElements(itemObj, parentElement) {
   for (const key in itemObj) {
