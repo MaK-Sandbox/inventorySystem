@@ -56,7 +56,37 @@ itemsBtn.addEventListener("click", async () => {
 addItemBtn.addEventListener("click", () => {
   mainContent.innerHTML = "";
 
-  mainContent.textContent = "Add item";
+  // create h1-heading
+  generateHeading("Add item");
+
+  // create an element with id add_items_form and begin to add children to it
+  const addItemForm = document.createElement("form");
+  addItemForm.setAttribute("id", "add_items_form");
+  mainContent.appendChild(addItemForm);
+
+  // add content for #add_items_form
+  const label = document.createElement("label");
+  label.textContent = "Upload file:";
+  label.setAttribute("for", "file");
+  addItemForm.appendChild(label);
+
+  const inputTypeFile = document.createElement("input");
+  inputTypeFile.setAttribute("type", "file");
+  inputTypeFile.setAttribute("id", "file");
+  inputTypeFile.setAttribute("name", "file");
+  inputTypeFile.setAttribute("multiple", true);
+  addItemForm.appendChild(inputTypeFile);
+
+  const inputTypeSubmit = document.createElement("input");
+  inputTypeSubmit.setAttribute("type", "submit");
+  inputTypeSubmit.value = "Submit";
+  addItemForm.appendChild(inputTypeSubmit);
+
+  /**
+   *  <label for="file">Upload file:</label>
+      <input type="file" id="file" name="file" multiple/>
+      <input type="submit" value="Submit" />
+   */
 });
 
 documentsBtn.addEventListener("click", () => {
