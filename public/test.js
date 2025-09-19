@@ -293,7 +293,12 @@ function generateGridElements(itemObj, parentElement) {
 
       const gridElement = document.createElement("div");
       gridElement.setAttribute("id", `${itemObj.id}-${key}`);
-      gridElement.textContent = value;
+
+      if (key === "purchase_price") {
+        gridElement.textContent = value.toLocaleString("de-DE");
+      } else {
+        gridElement.textContent = value;
+      }
       parentElement.appendChild(gridElement);
     }
   }
