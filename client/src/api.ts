@@ -1,4 +1,4 @@
-import type { Item, Location } from './types';
+import type { Item, Location, Document } from './types';
 
 async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
   const headers: Record<string, string> =
@@ -22,3 +22,17 @@ export const updateItem = (id: number, body: ItemPatch) =>
 
 export const removeItem = (id: number) =>
   apiFetch<Item>(`/api/v1/items/${id}`, { method: 'DELETE' });
+
+export const getItemDocuments = (itemId: number) =>
+  apiFetch<Document[]>(`/api/v1/documents/item/${itemId}`);
+
+export const uploadDocuments = async (itemId: number, files: FileList): Promise<Document[]> => {
+  const form = new FormData();
+  for (const file of Array.from(files)) form.append('files', file);
+  const res = await fetch(`/api/v1/documents/item/${itemId}`, { method: 'POST', body: form });
+  if (!res.ok) throw new Error(await res.text().catch(() => res.statusText));
+  return res.json();
+};
+
+export const deleteDocument = (docId: number) =>
+  apiFetch<{ deleted: number }>(`/api/v1/documents/${docId}`, { method: 'DELETE' });

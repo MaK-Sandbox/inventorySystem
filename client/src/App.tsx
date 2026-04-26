@@ -7,6 +7,7 @@ import { Sidebar } from './components/Sidebar';
 import { Topbar } from './components/Topbar';
 import { ItemsTable } from './components/ItemsTable';
 import { ItemModal } from './components/ItemModal';
+import { ItemDetailModal } from './components/ItemDetailModal';
 import { EmptyState } from './components/EmptyState';
 import { ToastContainer, useToast } from './components/Toast';
 
@@ -30,6 +31,7 @@ export default function App() {
   const [activeLocationId, setActiveLocationId] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [modal, setModal] = useState<ModalState>(null);
+  const [detailItem, setDetailItem] = useState<Item | null>(null);
   const { toasts, showToast } = useToast();
 
   useEffect(() => {
@@ -96,6 +98,7 @@ export default function App() {
             ? <ItemsTable
                 items={visibleItems}
                 locations={locations}
+                onRowClick={item => setDetailItem(item)}
                 onEdit={item => setModal(item)}
                 onDelete={handleDelete}
               />
@@ -110,6 +113,15 @@ export default function App() {
           locations={locations}
           onSave={handleSave}
           onClose={() => setModal(null)}
+        />
+      )}
+
+      {detailItem !== null && (
+        <ItemDetailModal
+          item={detailItem}
+          locations={locations}
+          onClose={() => setDetailItem(null)}
+          onEdit={item => { setDetailItem(null); setModal(item); }}
         />
       )}
 

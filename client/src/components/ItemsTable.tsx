@@ -22,11 +22,12 @@ const TrashIcon = () => (
 interface ItemsTableProps {
   items: Item[];
   locations: Location[];
+  onRowClick: (item: Item) => void;
   onEdit: (item: Item) => void;
   onDelete: (item: Item) => void;
 }
 
-export function ItemsTable({ items, locations, onEdit, onDelete }: ItemsTableProps) {
+export function ItemsTable({ items, locations, onRowClick, onEdit, onDelete }: ItemsTableProps) {
   return (
     <div className="table-card">
       <table>
@@ -46,7 +47,7 @@ export function ItemsTable({ items, locations, onEdit, onDelete }: ItemsTablePro
             const qty = item.quantity ?? 0;
             const locPath = getLocationPath(item.location_id, locations);
             return (
-              <tr key={item.id}>
+              <tr key={item.id} className="clickable-row" onClick={() => onRowClick(item)}>
                 <td className="col-name">{item.name}</td>
                 <td>
                   <span className={`qty-badge ${qtyClass(qty)}`}>{qty}</span>
