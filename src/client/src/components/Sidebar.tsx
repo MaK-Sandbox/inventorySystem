@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import type { Location, LocationNode } from '../types';
-import { buildTree } from '../utils';
+import { useState } from "react";
+import type { Location, LocationNode } from "../types";
+import { buildTree } from "../utils";
 
 // ─── Tree node ───────────────────────────────────────────────────────────────
 
@@ -16,18 +16,20 @@ function TreeNode({ node, activeId, onSelect, depth }: TreeNodeProps) {
   const hasChildren = node.children.length > 0;
 
   function handleClick() {
-    if (hasChildren) setExpanded(e => !e);
+    if (hasChildren) setExpanded((e) => !e);
     onSelect(node.id);
   }
 
   return (
     <li className="location-tree-item">
       <div
-        className={`loc-label${activeId === node.id ? ' active' : ''}`}
+        className={`loc-label${activeId === node.id ? " active" : ""}`}
         style={{ paddingLeft: `${18 + depth * 14}px` }}
         onClick={handleClick}
       >
-        <span className={`loc-toggle${expanded ? ' expanded' : ''}${!hasChildren ? ' leaf' : ''}`}>
+        <span
+          className={`loc-toggle${expanded ? " expanded" : ""}${!hasChildren ? " leaf" : ""}`}
+        >
           <svg viewBox="0 0 6 9" fill="currentColor">
             <path d="M0 0l6 4.5L0 9z" />
           </svg>
@@ -37,7 +39,7 @@ function TreeNode({ node, activeId, onSelect, depth }: TreeNodeProps) {
 
       {hasChildren && expanded && (
         <ul className="loc-children expanded">
-          {node.children.map(child => (
+          {node.children.map((child) => (
             <TreeNode
               key={child.id}
               node={child}
@@ -60,14 +62,25 @@ interface SidebarProps {
   onSelectLocation: (id: number | null) => void;
 }
 
-export function Sidebar({ locations, activeLocationId, onSelectLocation }: SidebarProps) {
+export function Sidebar({
+  locations,
+  activeLocationId,
+  onSelectLocation,
+}: SidebarProps) {
   const tree = buildTree(locations);
 
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
         <div className="sidebar-logo">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
             <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
             <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
             <line x1="12" y1="22.08" x2="12" y2="12" />
@@ -81,7 +94,7 @@ export function Sidebar({ locations, activeLocationId, onSelectLocation }: Sideb
 
       <nav className="sidebar-nav">
         <div
-          className={`nav-item${activeLocationId === null ? ' active' : ''}`}
+          className={`nav-item${activeLocationId === null ? " active" : ""}`}
           onClick={() => onSelectLocation(null)}
         >
           <svg className="nav-icon" viewBox="0 0 16 16" fill="currentColor">
@@ -92,7 +105,7 @@ export function Sidebar({ locations, activeLocationId, onSelectLocation }: Sideb
 
         <div className="nav-section-label">Locations</div>
         <ul className="location-tree">
-          {tree.map(node => (
+          {tree.map((node) => (
             <TreeNode
               key={node.id}
               node={node}

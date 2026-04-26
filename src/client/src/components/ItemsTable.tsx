@@ -1,10 +1,10 @@
-import type { Item, Location } from '../types';
-import { fmtDate, fmtPrice, getLocationPath } from '../utils';
+import type { Item, Location } from "../types";
+import { fmtDate, fmtPrice, getLocationPath } from "../utils";
 
 function qtyClass(qty: number) {
-  if (qty === 0) return 'qty-zero';
-  if (qty <= 2) return 'qty-low';
-  return 'qty-ok';
+  if (qty === 0) return "qty-zero";
+  if (qty <= 2) return "qty-low";
+  return "qty-ok";
 }
 
 const EditIcon = () => (
@@ -27,7 +27,13 @@ interface ItemsTableProps {
   onDelete: (item: Item) => void;
 }
 
-export function ItemsTable({ items, locations, onRowClick, onEdit, onDelete }: ItemsTableProps) {
+export function ItemsTable({
+  items,
+  locations,
+  onRowClick,
+  onEdit,
+  onDelete,
+}: ItemsTableProps) {
   return (
     <div className="table-card">
       <table>
@@ -43,34 +49,46 @@ export function ItemsTable({ items, locations, onRowClick, onEdit, onDelete }: I
           </tr>
         </thead>
         <tbody>
-          {items.map(item => {
+          {items.map((item) => {
             const qty = item.quantity ?? 0;
             const locPath = getLocationPath(item.location_id, locations);
             return (
-              <tr key={item.id} className="clickable-row" onClick={() => onRowClick(item)}>
+              <tr
+                key={item.id}
+                className="clickable-row"
+                onClick={() => onRowClick(item)}
+              >
                 <td className="col-name">{item.name}</td>
                 <td>
                   <span className={`qty-badge ${qtyClass(qty)}`}>{qty}</span>
                 </td>
-                <td className="col-location" title={locPath}>{locPath}</td>
+                <td className="col-location" title={locPath}>
+                  {locPath}
+                </td>
                 <td>{fmtPrice(item.purchase_price)}</td>
                 <td>{fmtDate(item.purchase_date)}</td>
-                <td className="col-notes" title={item.freeText ?? ''}>
-                  {item.freeText || '—'}
+                <td className="col-notes" title={item.freeText ?? ""}>
+                  {item.freeText || "—"}
                 </td>
                 <td>
                   <div className="col-actions">
                     <button
                       className="btn-icon"
                       title="Edit"
-                      onClick={e => { e.stopPropagation(); onEdit(item); }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit(item);
+                      }}
                     >
                       <EditIcon />
                     </button>
                     <button
                       className="btn-icon danger"
                       title="Delete"
-                      onClick={e => { e.stopPropagation(); onDelete(item); }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(item);
+                      }}
                     >
                       <TrashIcon />
                     </button>

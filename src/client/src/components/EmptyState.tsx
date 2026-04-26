@@ -1,7 +1,13 @@
 export function EmptyState() {
   return (
     <div className="empty-state">
-      <svg className="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <svg
+        className="empty-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      >
         <path
           strokeLinecap="round"
           strokeLinejoin="round"

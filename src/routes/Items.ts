@@ -65,8 +65,8 @@ router.post("/", (req, res) => {
 
   const insertStatement = db.prepare(
     `INSERT INTO items (${validatedProperties.join(
-      ", "
-    )}) VALUES (?, ?, ?, ?, ?, ?, ?)`
+      ", ",
+    )}) VALUES (?, ?, ?, ?, ?, ?, ?)`,
   );
 
   const info = insertStatement.run(...validatedValues);
@@ -125,7 +125,7 @@ router.put("/:id", (req, res) => {
       }
 
       const updateStatement = db.prepare(
-        `UPDATE items SET ${key} = ? WHERE id = ?`
+        `UPDATE items SET ${key} = ? WHERE id = ?`,
       );
       updateStatement.run(element, id);
     }

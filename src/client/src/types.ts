@@ -31,5 +31,5 @@ export interface Document {
 export interface ToastItem {
   id: number;
   message: string;
-  type: 'success' | 'error';
+  type: "success" | "error";
 }

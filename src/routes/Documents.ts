@@ -22,24 +22,38 @@ function docDir(): string {
 // GET /api/v1/documents/item/:itemId — list documents for an item
 router.get("/item/:itemId", (req, res) => {
   const itemId = parseInt(req.params.itemId);
-  if (isNaN(itemId)) { res.status(400).json({ error: "Invalid item ID" }); return; }
+  if (isNaN(itemId)) {
+    res.status(400).json({ error: "Invalid item ID" });
+    return;
+  }
 
   const docs = db
     .prepare("SELECT * FROM documents WHERE item_id = ? ORDER BY id ASC")
     .all(itemId) as DocumentRow[];
 
-  res.json(docs.map(d => ({ ...d, name: path.basename(d.path) })));
+  res.json(docs.map((d) => ({ ...d, name: path.basename(d.path) })));
 });
 
 // POST /api/v1/documents/item/:itemId — upload one or more files for an item
 router.post("/item/:itemId", async (req, res) => {
   const itemId = parseInt(req.params.itemId);
-  if (isNaN(itemId)) { res.status(400).json({ error: "Invalid item ID" }); return; }
+  if (isNaN(itemId)) {
+    res.status(400).json({ error: "Invalid item ID" });
+    return;
+  }
 
-  const item = db.prepare("SELECT id, name FROM items WHERE id = ?").get(itemId) as { id: number; name: string } | undefined;
-  if (!item) { res.status(404).json({ error: "Item not found" }); return; }
+  const item = db
+    .prepare("SELECT id, name FROM items WHERE id = ?")
+    .get(itemId) as { id: number; name: string } | undefined;
+  if (!item) {
+    res.status(404).json({ error: "Item not found" });
+    return;
+  }
 
-  if (!req.files?.files) { res.status(400).json({ error: "No files provided" }); return; }
+  if (!req.files?.files) {
+    res.status(400).json({ error: "No files provided" });
+    return;
+  }
 
   const uploaded: UploadedFile[] = Array.isArray(req.files.files)
     ? req.files.files
@@ -51,7 +65,7 @@ router.post("/item/:itemId", async (req, res) => {
   await fs.mkdir(dir, { recursive: true });
 
   const insert = db.prepare(
-    "INSERT INTO documents (item_id, path, description) VALUES (?, ?, ?)"
+    "INSERT INTO documents (item_id, path, description) VALUES (?, ?, ?)",
   );
 
   const created = [];
@@ -60,7 +74,13 @@ router.post("/item/:itemId", async (req, res) => {
     const filePath = path.join(dir, safeName);
     await file.mv(filePath);
     const info = insert.run(itemId, filePath, null);
-    created.push({ id: Number(info.lastInsertRowid), item_id: itemId, path: filePath, name: safeName, description: null });
+    created.push({
+      id: Number(info.lastInsertRowid),
+      item_id: itemId,
+      path: filePath,
+      name: safeName,
+      description: null,
+    });
   }
 
   res.status(201).json(created);
@@ -69,10 +89,18 @@ router.post("/item/:itemId", async (req, res) => {
 // GET /api/v1/documents/:docId/download — stream file to client
 router.get("/:docId/download", (req, res) => {
   const docId = parseInt(req.params.docId);
-  if (isNaN(docId)) { res.status(400).json({ error: "Invalid document ID" }); return; }
+  if (isNaN(docId)) {
+    res.status(400).json({ error: "Invalid document ID" });
+    return;
+  }
 
-  const doc = db.prepare("SELECT * FROM documents WHERE id = ?").get(docId) as DocumentRow | undefined;
-  if (!doc) { res.status(404).json({ error: "Document not found" }); return; }
+  const doc = db.prepare("SELECT * FROM documents WHERE id = ?").get(docId) as
+    | DocumentRow
+    | undefined;
+  if (!doc) {
+    res.status(404).json({ error: "Document not found" });
+    return;
+  }
 
   res.download(doc.path, path.basename(doc.path));
 });
@@ -80,10 +108,18 @@ router.get("/:docId/download", (req, res) => {
 // DELETE /api/v1/documents/:docId — delete file + DB record
 router.delete("/:docId", async (req, res) => {
   const docId = parseInt(req.params.docId);
-  if (isNaN(docId)) { res.status(400).json({ error: "Invalid document ID" }); return; }
+  if (isNaN(docId)) {
+    res.status(400).json({ error: "Invalid document ID" });
+    return;
+  }
 
-  const doc = db.prepare("SELECT * FROM documents WHERE id = ?").get(docId) as DocumentRow | undefined;
-  if (!doc) { res.status(404).json({ error: "Document not found" }); return; }
+  const doc = db.prepare("SELECT * FROM documents WHERE id = ?").get(docId) as
+    | DocumentRow
+    | undefined;
+  if (!doc) {
+    res.status(404).json({ error: "Document not found" });
+    return;
+  }
 
   await fs.unlink(doc.path).catch(() => {});
   db.prepare("DELETE FROM documents WHERE id = ?").run(docId);

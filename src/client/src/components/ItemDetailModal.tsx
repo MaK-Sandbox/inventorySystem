@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
-import type { Item, Location, Document } from '../types';
-import { getItemDocuments, uploadDocuments, deleteDocument } from '../api';
-import { fmtDate, fmtPrice, getLocationPath } from '../utils';
+import { useState, useEffect, useRef } from "react";
+import type { Item, Location, Document } from "../types";
+import { getItemDocuments, uploadDocuments, deleteDocument } from "../api";
+import { fmtDate, fmtPrice, getLocationPath } from "../utils";
 
 const DownloadIcon = () => (
   <svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14">
@@ -23,7 +23,12 @@ interface ItemDetailModalProps {
   onEdit: (item: Item) => void;
 }
 
-export function ItemDetailModal({ item, locations, onClose, onEdit }: ItemDetailModalProps) {
+export function ItemDetailModal({
+  item,
+  locations,
+  onClose,
+  onEdit,
+}: ItemDetailModalProps) {
   const [docs, setDocs] = useState<Document[]>([]);
   const [loadingDocs, setLoadingDocs] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -31,16 +36,18 @@ export function ItemDetailModal({ item, locations, onClose, onEdit }: ItemDetail
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
-    document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
   }, [onClose]);
 
   useEffect(() => {
     setLoadingDocs(true);
     getItemDocuments(item.id)
       .then(setDocs)
-      .catch(() => setError('Failed to load documents.'))
+      .catch(() => setError("Failed to load documents."))
       .finally(() => setLoadingDocs(false));
   }, [item.id]);
 
@@ -51,12 +58,12 @@ export function ItemDetailModal({ item, locations, onClose, onEdit }: ItemDetail
     setError(null);
     try {
       const created = await uploadDocuments(item.id, files);
-      setDocs(prev => [...prev, ...created]);
+      setDocs((prev) => [...prev, ...created]);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Upload failed.');
+      setError(err instanceof Error ? err.message : "Upload failed.");
     } finally {
       setUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = '';
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   }
 
@@ -64,20 +71,34 @@ export function ItemDetailModal({ item, locations, onClose, onEdit }: ItemDetail
     if (!confirm(`Delete "${doc.name}"?`)) return;
     try {
       await deleteDocument(doc.id);
-      setDocs(prev => prev.filter(d => d.id !== doc.id));
+      setDocs((prev) => prev.filter((d) => d.id !== doc.id));
     } catch {
-      setError('Failed to delete document.');
+      setError("Failed to delete document.");
     }
   }
 
   const locPath = getLocationPath(item.location_id, locations);
 
   return (
-    <div className="modal-backdrop" onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
-      <div className="modal modal-detail" role="dialog" aria-modal aria-labelledby="detail-title">
+    <div
+      className="modal-backdrop"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div
+        className="modal modal-detail"
+        role="dialog"
+        aria-modal
+        aria-labelledby="detail-title"
+      >
         <div className="modal-header">
           <h3 id="detail-title">{item.name}</h3>
-          <button className="modal-close-btn" onClick={onClose} aria-label="Close">
+          <button
+            className="modal-close-btn"
+            onClick={onClose}
+            aria-label="Close"
+          >
             <svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14">
               <path d="M3.72 3.72a.75.75 0 011.06 0L8 6.94l3.22-3.22a.75.75 0 111.06 1.06L9.06 8l3.22 3.22a.75.75 0 11-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 01-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 010-1.06z" />
             </svg>
@@ -119,13 +140,15 @@ export function ItemDetailModal({ item, locations, onClose, onEdit }: ItemDetail
           <div className="detail-section">
             <div className="detail-section-header">
               <h4>Documents</h4>
-              <label className={`btn btn-secondary btn-sm${uploading ? ' btn-disabled' : ''}`}>
-                {uploading ? 'Uploading…' : 'Upload'}
+              <label
+                className={`btn btn-secondary btn-sm${uploading ? " btn-disabled" : ""}`}
+              >
+                {uploading ? "Uploading…" : "Upload"}
                 <input
                   ref={fileInputRef}
                   type="file"
                   multiple
-                  style={{ display: 'none' }}
+                  style={{ display: "none" }}
                   onChange={handleUpload}
                   disabled={uploading}
                 />
@@ -140,16 +163,18 @@ export function ItemDetailModal({ item, locations, onClose, onEdit }: ItemDetail
               <p className="detail-empty">No documents attached.</p>
             ) : (
               <ul className="doc-list">
-                {docs.map(doc => (
+                {docs.map((doc) => (
                   <li key={doc.id} className="doc-item">
-                    <span className="doc-name" title={doc.name}>{doc.name}</span>
+                    <span className="doc-name" title={doc.name}>
+                      {doc.name}
+                    </span>
                     <div className="doc-actions">
                       <a
                         className="btn-icon"
                         href={`/api/v1/documents/${doc.id}/download`}
                         download={doc.name}
                         title="Download"
-                        onClick={e => e.stopPropagation()}
+                        onClick={(e) => e.stopPropagation()}
                       >
                         <DownloadIcon />
                       </a>
@@ -172,7 +197,14 @@ export function ItemDetailModal({ item, locations, onClose, onEdit }: ItemDetail
           <button type="button" className="btn btn-secondary" onClick={onClose}>
             Close
           </button>
-          <button type="button" className="btn btn-primary" onClick={() => { onClose(); onEdit(item); }}>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => {
+              onClose();
+              onEdit(item);
+            }}
+          >
             Edit
           </button>
         </div>

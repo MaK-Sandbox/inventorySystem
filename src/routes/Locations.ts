@@ -55,7 +55,7 @@ router.post("/", (req, res) => {
   const validatedValues = Object.values(insertData);
 
   const insertStatement = db.prepare(
-    `INSERT INTO locations (${validatedProperties.join(", ")}) VALUES (?, ?, ?)`
+    `INSERT INTO locations (${validatedProperties.join(", ")}) VALUES (?, ?, ?)`,
   );
 
   const info = insertStatement.run(...validatedValues);
@@ -70,7 +70,7 @@ router.post("/", (req, res) => {
 
   // Return the newly created item
   res.json(
-    db.prepare("SELECT * FROM locations WHERE id = ?").get(newLocationId)
+    db.prepare("SELECT * FROM locations WHERE id = ?").get(newLocationId),
   );
 });
 
@@ -108,7 +108,7 @@ router.put("/:id", (req, res) => {
       }
 
       const updateStatement = db.prepare(
-        `UPDATE locations SET ${key} = ? WHERE id = ?`
+        `UPDATE locations SET ${key} = ? WHERE id = ?`,
       );
       updateStatement.run(element, id);
     }

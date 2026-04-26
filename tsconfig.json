@@ -1,13 +1,18 @@
 {
   "compilerOptions": {
+    "rootDir": "./src",
     "outDir": "./dist",
     "allowJs": true,
     "module": "nodenext",
     "target": "esnext",
     "noEmitOnError": true,
     "noImplicitAny": true,
-    "esModuleInterop": true,
+    "esModuleInterop": true
   },
-  "include": ["./src/**/*"],
-  "exclude": ["./src/client"]
+  "include": [
+    "./src/**/*"
+  ],
+  "exclude": [
+    "./src/client"
+  ]
 }

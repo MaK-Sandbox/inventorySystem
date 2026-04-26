@@ -6,13 +6,19 @@ interface TopbarProps {
   onAdd: () => void;
 }
 
-export function Topbar({ title, count, searchQuery, onSearchChange, onAdd }: TopbarProps) {
+export function Topbar({
+  title,
+  count,
+  searchQuery,
+  onSearchChange,
+  onAdd,
+}: TopbarProps) {
   return (
     <header className="topbar">
       <div className="topbar-title-area">
         <div className="topbar-title">{title}</div>
         <div className="topbar-count">
-          {count} {count === 1 ? 'item' : 'items'}
+          {count} {count === 1 ? "item" : "items"}
         </div>
       </div>
 
@@ -27,7 +33,7 @@ export function Topbar({ title, count, searchQuery, onSearchChange, onAdd }: Top
             placeholder="Search items…"
             autoComplete="off"
             value={searchQuery}
-            onChange={e => onSearchChange(e.target.value)}
+            onChange={(e) => onSearchChange(e.target.value)}
           />
         </div>
 
