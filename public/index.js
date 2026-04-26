@@ -1,480 +1,378 @@
-const form = document.getElementById("form");
-const searchForm = document.getElementById("search-bar-block");
-const itemsContainer = document.getElementById("items-container");
-const locationsContainer = document.getElementById("locations-container");
-const locationSelection = document.getElementById("select-location_id");
-const editItemContainer = document.getElementById("edit-item-container");
-const searchResultsContainer = document.getElementById(
-  "search-results-container"
-);
-const purchaseDate = document.getElementById("purchase_date");
+'use strict';
 
-// check if in devleopment
-const isDev = ["localhost", "127.0.0.1"].includes(window.location.hostname);
-const API_BASE_URL = isDev ? "http://localhost:3000" : "http://ser6pro:3000";
+// Same origin — Express serves both the static files and the API
+const API = '';
 
-// initialize purchase date
-initializePurchaseDate();
+// ─── State ───
+let allItems = [];
+let allLocations = [];
+let activeLocationId = null;
+let editingId = null;
 
-document.addEventListener("DOMContentLoaded", async () => {
-  // display fetched items
-  displayFetchedData(
-    `${API_BASE_URL}/api/v1/items`,
-    [
-      { name: "edit", emoji: "✏️" },
-      { name: "delete", emoji: "🗑️" },
-    ],
-    itemsContainer
-  );
+// ─── Utilities ───
 
-  // display fetched locations
-  const nestedHTML = await listLocations();
-  locationsContainer.innerHTML = nestedHTML;
-
-  // display location options in the location selection
-  displayLocationSelection();
-});
-
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
-
-  const formData = new FormData(form);
-
-  const dataObject = Object.fromEntries(formData);
-
-  const payload = JSON.stringify(dataObject);
-
-  const url = `${API_BASE_URL}/api/v1/items`;
-
-  const newlyAddedItem = await postNewData(url, payload);
-  console.log("newlyAddedItem:", newlyAddedItem);
-
-  displayFetchedData(
-    `${API_BASE_URL}/api/v1/items`,
-    [
-      { name: "edit", emoji: "✏️" },
-      { name: "delete", emoji: "🗑️" },
-    ],
-    itemsContainer
-  );
-});
-
-searchForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-
-  const formData = new FormData(searchForm);
-
-  const dataObject = Object.fromEntries(formData);
-  const dataArray = Object.entries(dataObject);
-
-  const baseURL = `${API_BASE_URL}/search?`;
-  const searchQuery = dataArray.map((set) => set.join("=")).join("&");
-
-  const searchUrl = baseURL + searchQuery;
-  const encodedURL = encodeURI(searchUrl.toLowerCase());
-
-  // alternate between which element is visible in the browser and which is hidden
-  if (!document.getElementById("items-block").classList.contains("hide")) {
-    document.getElementById("items-block").classList.add("hide");
-  }
-
-  if (!document.getElementById("edit-item-block").classList.contains("hide")) {
-    document.getElementById("edit-item-block").classList.add("hide");
-  }
-
-  document.getElementById("search-results-block").classList.remove("hide");
-
-  displayFetchedData(
-    encodedURL,
-    [
-      { name: "edit", emoji: "✏️" },
-      { name: "delete", emoji: "🗑️" },
-    ],
-    searchResultsContainer
-  );
-});
-
-function initializePurchaseDate() {
-  const d = new Date();
-  let year = d.getFullYear();
-  let month = addZero(d.getMonth() + 1);
-  let date = addZero(d.getDate());
-  let hour = addZero(d.getHours());
-  purchaseDate.value = `${year}-${month}-${date} ${hour}:00:00`;
+function esc(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
-function addZero(i) {
-  if (i < 10) return `0${i}`;
-  return i;
+function fmtDate(raw) {
+  if (!raw) return '—';
+  const d = new Date(raw.replace(' ', 'T'));
+  return isNaN(d) ? raw : d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
-async function listLocations() {
-  locationsContainer.innerHTML = "";
+function fmtPrice(val) {
+  if (val == null || val === '') return '—';
+  return `€${val}`;
+}
 
-  // fetch data that we want to display in the grid container
-  const locations = await fetchCurrentData(`${API_BASE_URL}/api/v1/locations`);
+function locationName(id) {
+  const loc = allLocations.find(l => l.id === id);
+  return loc ? loc.name : '—';
+}
 
-  // Step 1: Create a map object. Use location id as keys and location objects as values.
-  // Ensure to add a new property called children in the location objects which has an empty array as its value
-  const map = new Map();
-  locations.forEach((location) => {
-    map.set(location.id, { ...location, children: [] });
+function getLocationPath(id) {
+  const parts = [];
+  let cur = allLocations.find(l => l.id === id);
+  while (cur) {
+    parts.unshift(cur.name);
+    cur = cur.parent_id != null ? allLocations.find(l => l.id === cur.parent_id) : null;
+  }
+  return parts.join(' → ');
+}
+
+// ─── Toast ───
+
+function toast(msg, type = 'success') {
+  const container = document.getElementById('toast-container');
+  const el = document.createElement('div');
+  el.className = `toast toast-${type}`;
+  el.innerHTML = `<span class="toast-dot"></span>${esc(msg)}`;
+  container.appendChild(el);
+  setTimeout(() => {
+    el.style.animation = 'fade-out 0.25s ease forwards';
+    setTimeout(() => el.remove(), 250);
+  }, 3000);
+}
+
+// ─── API ───
+
+async function apiFetch(path, opts = {}) {
+  const res = await fetch(`${API}${path}`, {
+    headers: opts.body != null ? { 'Content-Type': 'application/json' } : {},
+    ...opts,
+    body: opts.body != null ? JSON.stringify(opts.body) : undefined,
   });
+  if (!res.ok) throw new Error(await res.text().catch(() => res.statusText));
+  return res.json();
+}
 
-  // Step 2: Create an empty root array for top-level nodes
+const fetchItems     = ()         => apiFetch('/api/v1/items');
+const fetchLocations = ()         => apiFetch('/api/v1/locations');
+const createItem     = body       => apiFetch('/api/v1/items',      { method: 'POST',   body });
+const updateItem     = (id, body) => apiFetch(`/api/v1/items/${id}`, { method: 'PUT',   body });
+const deleteItem     = id         => apiFetch(`/api/v1/items/${id}`, { method: 'DELETE' });
+
+// ─── Location Tree ───
+
+function buildTree(locs) {
+  const map = new Map(locs.map(l => [l.id, { ...l, children: [] }]));
   const roots = [];
-
-  // Step 3: Build the tree by linking children to their parent
-  locations.forEach((location) => {
-    if (location.parent_id === null) {
-      roots.push(map.get(location.id));
+  map.forEach(l => {
+    if (l.parent_id && map.has(l.parent_id)) {
+      map.get(l.parent_id).children.push(l);
     } else {
-      const parent = map.get(location.parent_id);
-      // map.get() will return undefined if the sought after value does not exist
-      // if the parent exists, add the location.id of the child to the children array
-      if (parent) {
-        parent.children.push(map.get(location.id));
-      }
+      roots.push(l);
     }
   });
+  return roots;
+}
 
-  // Step 4: Recursively render the nested unordered list
-  function renderList(locations) {
-    let html = "<ul>";
-    for (const location of locations) {
-      html += `<li>id: ${location.id} - ${location.name}`;
-      if (location.children.length > 0) {
-        html += renderList(location.children);
-      }
-      html += "</li>";
-    }
-    html += "</ul>";
-    return html;
+function makeTreeNode(node, depth) {
+  const hasChildren = node.children.length > 0;
+
+  const li = document.createElement('li');
+  li.className = 'location-tree-item';
+
+  const label = document.createElement('div');
+  label.className = 'loc-label';
+  label.style.paddingLeft = `${18 + depth * 14}px`;
+  label.dataset.locId = node.id;
+
+  const toggle = document.createElement('span');
+  toggle.className = `loc-toggle${hasChildren ? '' : ' leaf'}`;
+  toggle.innerHTML = `<svg viewBox="0 0 6 9" fill="currentColor"><path d="M0 0l6 4.5L0 9z"/></svg>`;
+
+  const name = document.createElement('span');
+  name.className = 'loc-name';
+  name.textContent = node.name;
+
+  label.appendChild(toggle);
+  label.appendChild(name);
+  li.appendChild(label);
+
+  let childrenUl = null;
+  if (hasChildren) {
+    childrenUl = document.createElement('ul');
+    childrenUl.className = 'loc-children';
+    node.children.forEach(c => childrenUl.appendChild(makeTreeNode(c, depth + 1)));
+    li.appendChild(childrenUl);
   }
 
-  // Step 5: Render the final html
-  return renderList(roots);
-}
-
-async function displayLocationSelection() {
-  locationSelection.innerHTML = "";
-
-  // fetch data that we want to display in the grid container
-  const locations = await fetchCurrentData(`${API_BASE_URL}/api/v1/locations`);
-
-  locations.forEach((location) => {
-    let option = document.createElement("option");
-    option.classList.add("location-options");
-    option.setAttribute("value", location.id);
-    option.setAttribute("id", location.id);
-    option.textContent = `id: ${location.id} - ${location.name}`;
-    locationSelection.appendChild(option);
+  label.addEventListener('click', () => {
+    if (childrenUl) {
+      const open = childrenUl.classList.toggle('expanded');
+      toggle.classList.toggle('expanded', open);
+    }
+    document.querySelectorAll('.loc-label').forEach(el => el.classList.remove('active'));
+    document.getElementById('all-items-nav').classList.remove('active');
+    label.classList.add('active');
+    activeLocationId = node.id;
+    renderItems();
   });
+
+  return li;
 }
 
-async function displayFetchedData(url, iconArray, parentElement) {
-  parentElement.innerHTML = "";
+function renderTree() {
+  const ul = document.getElementById('location-tree');
+  ul.innerHTML = '';
+  buildTree(allLocations).forEach(node => ul.appendChild(makeTreeNode(node, 0)));
+}
 
-  // fetch data that we want to display in the grid container
-  const fetchedData = await fetchCurrentData(url);
+function populateLocationSelect() {
+  const sel = document.getElementById('f-location');
+  sel.innerHTML = '<option value="">— No location —</option>';
+  [...allLocations]
+    .map(loc => ({ id: loc.id, path: getLocationPath(loc.id) }))
+    .sort((a, b) => a.path.localeCompare(b.path))
+    .forEach(({ id, path }) => {
+      const opt = document.createElement('option');
+      opt.value = id;
+      opt.textContent = path;
+      sel.appendChild(opt);
+    });
+}
 
-  // generate headers
-  const properties = Object.keys(fetchedData[0]);
+// ─── Items Rendering ───
 
-  // we also need an array that describes the type of icons we expect to create for this project
-  generateHeaders(properties, iconArray, parentElement);
+function getVisible() {
+  const q = (document.getElementById('search-input').value || '').trim().toLowerCase();
+  let items = allItems;
 
-  // fetchedData is an array
-  // generate a row in the grid for each element within the fetchedData array
-  // sort the array before creating grid items
-  fetchedData
-    .sort((a, b) => b.id - a.id)
-    .map((item) =>
-      generateGridRows(
-        item,
-        iconArray,
-        parentElement,
-        fetchedData[fetchedData.length - 1].id
-      )
+  if (activeLocationId != null) {
+    items = items.filter(i => i.location_id === activeLocationId);
+  }
+
+  if (q) {
+    items = items.filter(i =>
+      (i.name || '').toLowerCase().includes(q) ||
+      (i.freeText || '').toLowerCase().includes(q)
     );
+  }
+
+  return [...items].sort((a, b) => b.id - a.id);
 }
 
-function generateHeaders(properties, icons, parentElement) {
-  properties.map((prop) => {
-    let header = document.createElement("div");
-    header.classList.add("header");
-    header.setAttribute("id", `header-${prop}`);
-    header.textContent = prop;
-    parentElement.appendChild(header);
+function renderItems() {
+  const items = getVisible();
+  const tbody = document.getElementById('items-tbody');
+  const tableCard = document.getElementById('table-card');
+  const emptyState = document.getElementById('empty-state');
+
+  document.getElementById('topbar-title').textContent =
+    activeLocationId != null ? locationName(activeLocationId) : 'All Items';
+  document.getElementById('topbar-count').textContent =
+    `${items.length} ${items.length === 1 ? 'item' : 'items'}`;
+
+  if (items.length === 0) {
+    tableCard.classList.add('hide');
+    emptyState.classList.remove('hide');
+    return;
+  }
+
+  tableCard.classList.remove('hide');
+  emptyState.classList.add('hide');
+  tbody.innerHTML = '';
+
+  items.forEach(item => {
+    const qty = item.quantity ?? 0;
+    const qtyClass = qty === 0 ? 'qty-zero' : qty <= 2 ? 'qty-low' : 'qty-ok';
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="col-name">${esc(item.name)}</td>
+      <td><span class="qty-badge ${qtyClass}">${qty}</span></td>
+      <td>${esc(locationName(item.location_id))}</td>
+      <td>${esc(fmtPrice(item.purchase_price))}</td>
+      <td>${esc(fmtDate(item.purchase_date))}</td>
+      <td class="col-notes" title="${esc(item.freeText || '')}">${esc(item.freeText || '—')}</td>
+      <td>
+        <div class="col-actions">
+          <button class="btn-icon js-edit" data-id="${item.id}" title="Edit">
+            <svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14">
+              <path d="M11.013 1.427a1.75 1.75 0 012.474 0l1.086 1.086a1.75 1.75 0 010 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 01-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61zm1.414 1.06a.25.25 0 00-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 000-.354l-1.086-1.086zM11.189 6.25L9.75 4.81 3.23 11.33a.25.25 0 00-.064.108l-.558 1.953 1.953-.558a.25.25 0 00.108-.064l6.52-6.52z"/>
+            </svg>
+          </button>
+          <button class="btn-icon danger js-del" data-id="${item.id}" title="Delete">
+            <svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14">
+              <path d="M6.5 1.75a.25.25 0 01.25-.25h2.5a.25.25 0 01.25.25V3h-3V1.75zm4.5 0V3h2.25a.75.75 0 010 1.5H2.75a.75.75 0 010-1.5H5V1.75C5 .784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75zM4.496 6.675a.75.75 0 10-1.492.15l.66 6.6A1.75 1.75 0 005.405 15h5.19c.9 0 1.652-.681 1.741-1.575l.66-6.6a.75.75 0 00-1.492-.15l-.66 6.6a.25.25 0 01-.249.225h-5.19a.25.25 0 01-.249-.225l-.66-6.6z"/>
+            </svg>
+          </button>
+        </div>
+      </td>`;
+
+    tr.querySelector('.js-edit').addEventListener('click', () => openEdit(item.id));
+    tr.querySelector('.js-del').addEventListener('click', () => handleDelete(item.id));
+    tbody.appendChild(tr);
+  });
+}
+
+// ─── Modal ───
+
+function openAdd() {
+  editingId = null;
+  document.getElementById('modal-title').textContent = 'Add Item';
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-quantity').value = '1';
+  document.getElementById('f-location').value = '';
+  document.getElementById('f-price').value = '';
+  document.getElementById('f-date').value = '';
+  document.getElementById('f-notes').value = '';
+  showModal();
+}
+
+function openEdit(id) {
+  const item = allItems.find(i => i.id === id);
+  if (!item) return;
+  editingId = id;
+  document.getElementById('modal-title').textContent = 'Edit Item';
+  document.getElementById('f-name').value = item.name ?? '';
+  document.getElementById('f-quantity').value = item.quantity ?? 1;
+  document.getElementById('f-location').value = item.location_id ?? '';
+  document.getElementById('f-price').value = item.purchase_price ?? '';
+  if (item.purchase_date) {
+    const d = new Date(item.purchase_date.replace(' ', 'T'));
+    document.getElementById('f-date').value = isNaN(d) ? '' : d.toISOString().slice(0, 10);
+  } else {
+    document.getElementById('f-date').value = '';
+  }
+  document.getElementById('f-notes').value = item.freeText ?? '';
+  showModal();
+}
+
+function showModal() {
+  document.getElementById('modal-backdrop').classList.remove('hide');
+  document.getElementById('f-name').focus();
+}
+
+function closeModal() {
+  document.getElementById('modal-backdrop').classList.add('hide');
+  editingId = null;
+}
+
+async function handleSave() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { toast('Name is required.', 'error'); return; }
+
+  const quantity     = parseInt(document.getElementById('f-quantity').value) || 0;
+  const locVal       = document.getElementById('f-location').value;
+  const location_id  = locVal ? parseInt(locVal) : null;
+  const priceVal     = document.getElementById('f-price').value.trim();
+  const purchase_price = priceVal !== '' ? parseInt(priceVal) : null;
+  const dateVal      = document.getElementById('f-date').value;
+  const purchase_date = dateVal ? `${dateVal} 00:00:00` : null;
+  const freeText     = document.getElementById('f-notes').value.trim() || null;
+
+  const saveBtn = document.getElementById('modal-save-btn');
+  saveBtn.disabled = true;
+  saveBtn.textContent = 'Saving…';
+
+  try {
+    if (editingId) {
+      const prev = allItems.find(i => i.id === editingId);
+      const updates = {};
+      if (name !== prev.name) updates.name = name;
+      if (quantity !== prev.quantity) updates.quantity = quantity;
+      if (location_id !== prev.location_id) updates.location_id = location_id;
+      if (purchase_price !== prev.purchase_price) updates.purchase_price = purchase_price;
+      if (purchase_date !== prev.purchase_date) updates.purchase_date = purchase_date;
+      if (freeText !== (prev.freeText || null)) updates.freeText = freeText;
+      if (Object.keys(updates).length) await updateItem(editingId, updates);
+      toast('Item updated.');
+    } else {
+      // POST requires all 7 fields — send them all even if null
+      await createItem({ name, quantity, location_id, purchase_price, currency_id: 1, purchase_date, freeText });
+      toast('Item added.');
+    }
+    closeModal();
+    allItems = await fetchItems();
+    renderItems();
+  } catch (err) {
+    toast(err.message || 'Something went wrong.', 'error');
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.textContent = 'Save';
+  }
+}
+
+async function handleDelete(id) {
+  const item = allItems.find(i => i.id === id);
+  if (!confirm(`Delete "${item ? item.name : `item #${id}`}"?`)) return;
+  try {
+    await deleteItem(id);
+    toast('Item deleted.');
+    allItems = await fetchItems();
+    renderItems();
+  } catch (err) {
+    toast(err.message || 'Failed to delete.', 'error');
+  }
+}
+
+// ─── Init ───
+
+async function init() {
+  try {
+    [allItems, allLocations] = await Promise.all([fetchItems(), fetchLocations()]);
+  } catch {
+    toast('Failed to load data. Is the server running?', 'error');
+    return;
+  }
+
+  renderTree();
+  populateLocationSelect();
+  renderItems();
+
+  document.getElementById('all-items-nav').addEventListener('click', () => {
+    document.querySelectorAll('.loc-label').forEach(el => el.classList.remove('active'));
+    document.getElementById('all-items-nav').classList.add('active');
+    activeLocationId = null;
+    renderItems();
   });
 
-  // create two empty rows (no header text, just empty divs)
-  for (let i = 0; i < icons.length; i++) {
-    let icon = icons[i];
+  document.getElementById('add-item-btn').addEventListener('click', openAdd);
+  document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+  document.getElementById('modal-cancel-btn').addEventListener('click', closeModal);
+  document.getElementById('modal-save-btn').addEventListener('click', handleSave);
 
-    let emptyHeader = document.createElement("div");
-    emptyHeader.classList.add("emptyHeader");
-    emptyHeader.setAttribute("id", `header-${icon.name}`);
-    emptyHeader.textContent = "";
-    parentElement.appendChild(emptyHeader);
-  }
+  document.getElementById('modal-backdrop').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeModal();
+  });
+
+  document.getElementById('search-input').addEventListener('input', renderItems);
+
+  document.addEventListener('keydown', e => {
+    const modalOpen = !document.getElementById('modal-backdrop').classList.contains('hide');
+    if (e.key === 'Escape' && modalOpen) closeModal();
+    if (e.key === 'Enter' && modalOpen && document.activeElement.tagName !== 'TEXTAREA') {
+      e.preventDefault();
+      handleSave();
+    }
+  });
 }
 
-function generateGridRows(object, icons, parentElement, idOfLastItem) {
-  for (const key in object) {
-    if (Object.prototype.hasOwnProperty.call(object, key)) {
-      const element = object[key];
-
-      let newElement = document.createElement("div");
-
-      if (object.id === idOfLastItem) {
-        newElement.classList.add("bottom-item");
-      }
-
-      newElement.setAttribute("id", `${object.id}-${key}`);
-      newElement.textContent = element;
-      parentElement.appendChild(newElement);
-    }
-  }
-  generateIcons(icons, object.id, parentElement);
-}
-
-function generateIcons(icons, id, parentElement) {
-  // create icons for each row in the grid
-  for (let i = 0; i < icons.length; i++) {
-    let icon = icons[i];
-
-    let iconElement = document.createElement("i");
-    iconElement.classList.add("icon");
-    iconElement.setAttribute("id", `${id}-${icon.name}`);
-    iconElement.textContent = icon.emoji;
-
-    if (icon.name === "edit") {
-      iconElement.addEventListener("click", async (event) => {
-        const id = event.target.id.split("-")[0];
-
-        // alternate between which element is visible in the browser and which is hidden
-        document.getElementById("items-block").classList.add("hide");
-        document.getElementById("edit-item-block").classList.remove("hide");
-
-        editItemContainer.innerHTML = "";
-
-        // find the item in the database
-        const item = await fetchCurrentData(
-          `${API_BASE_URL}/api/v1/items/${id}`
-        );
-
-        // lets get the names for the
-        const keys = Object.keys(item);
-
-        const icons = [
-          { name: "save", emoji: "💾" },
-          { name: "cancel", emoji: "❌" },
-        ];
-
-        // we also need an array that describes the type of icons we expect to create for this project
-        generateHeaders(keys, icons, editItemContainer);
-
-        // for each
-        for (const key in item) {
-          if (Object.prototype.hasOwnProperty.call(item, key)) {
-            const value = item[key];
-
-            let inputElement;
-
-            if (key === "id") {
-              inputElement = document.createElement("div");
-              inputElement.textContent = value;
-            } else {
-              inputElement = document.createElement("input");
-              inputElement.type = "text";
-              inputElement.value = value;
-              inputElement.placeholder = value;
-            }
-            inputElement.setAttribute("id", `${item.id}-${key}`);
-            inputElement.classList.add("item-to-edit", "bottom-item");
-            editItemContainer.append(inputElement);
-          }
-        }
-
-        icons.forEach((icon) => {
-          let iconElement = document.createElement("i");
-          iconElement.classList.add("icon");
-          iconElement.setAttribute("id", `${item.id}-${icon.name}`);
-          iconElement.textContent = icon.emoji;
-
-          if (icon.name === "save") {
-            iconElement.addEventListener("click", async () => {
-              const itemObj = {};
-              const editedItem = [
-                ...document.querySelectorAll(".item-to-edit"),
-              ];
-
-              editedItem.forEach((info) => {
-                const prop = info.id.split("-")[1];
-
-                if (prop !== "id") {
-                  itemObj[prop] = info.value;
-                }
-              });
-
-              const payload = JSON.stringify(itemObj);
-
-              const id = editedItem[0].textContent;
-              const url = `${API_BASE_URL}/api/v1/items/${id}`;
-
-              const item = await editOneItem(url, payload);
-
-              // alternate between which element is visible in the browser and which is hidden
-              document.getElementById("items-block").classList.remove("hide");
-              document.getElementById("edit-item-block").classList.add("hide");
-
-              displayFetchedData(
-                `${API_BASE_URL}/api/v1/items`,
-                [
-                  { name: "edit", emoji: "✏️" },
-                  { name: "delete", emoji: "🗑️" },
-                ],
-                itemsContainer
-              );
-            });
-          }
-
-          if (icon.name === "cancel") {
-            iconElement.addEventListener("click", () => {
-              editItemContainer.innerHTML === "";
-
-              document.getElementById("items-block").classList.remove("hide");
-              document.getElementById("edit-item-block").classList.add("hide");
-
-              // display fetched items
-              displayFetchedData(
-                `${API_BASE_URL}/api/v1/items`,
-                [
-                  { name: "edit", emoji: "✏️" },
-                  { name: "delete", emoji: "🗑️" },
-                ],
-                itemsContainer
-              );
-            });
-          }
-
-          editItemContainer.append(iconElement);
-        });
-      });
-    }
-
-    if (icon.name === "delete") {
-      iconElement.addEventListener("click", (event) => {
-        const id = event.target.id.split("-")[0];
-
-        // delete the item with the given id from the database
-        deleteOneItem(`${API_BASE_URL}/api/v1/items/${id}`);
-
-        // once item is deleted, re-render items
-        displayFetchedData(
-          `${API_BASE_URL}/api/v1/items`,
-          [
-            { name: "edit", emoji: "✏️" },
-            { name: "delete", emoji: "🗑️" },
-          ],
-          itemsContainer
-        );
-      });
-    }
-
-    parentElement.appendChild(iconElement);
-  }
-}
-
-async function editOneItem(url, payload) {
-  const options = {
-    method: "put",
-    headers: {
-      "Content-Type": "application/json; charset=utf-8",
-    },
-    body: payload,
-  };
-
-  try {
-    const response = await fetch(url, options);
-
-    if (!response.ok) {
-      throw new Error(`Response status: ${response.status}`);
-    }
-
-    const json = await response.json();
-    return json;
-  } catch (error) {
-    console.error(error.message);
-  }
-}
-
-async function deleteOneItem(url) {
-  const options = {
-    method: "delete",
-    headers: {
-      "Content-Type": "application/json; charset=utf-8",
-      "Access-Control-Allow-Origin": "*",
-    },
-  };
-
-  try {
-    const response = await fetch(url, options);
-
-    if (!response.ok) {
-      throw new Error(`Response status: ${response.status}`);
-    }
-
-    const json = await response.json();
-    return json;
-  } catch (error) {
-    console.error(error.message);
-  }
-}
-
-async function postNewData(url, payload) {
-  const options = {
-    method: "post",
-    headers: {
-      "Content-Type": "application/json; charset=utf-8",
-      "Access-Control-Allow-Origin": "*",
-    },
-    body: payload,
-  };
-
-  try {
-    const response = await fetch(url, options);
-
-    if (!response.ok) {
-      throw new Error(`Response status: ${response.status}`);
-    }
-
-    const json = await response.json();
-    return json;
-  } catch (error) {
-    console.error(error.message);
-  }
-}
-
-async function fetchCurrentData(url) {
-  const options = {
-    headers: {
-      "Content-Type": "application/json; charset=utf-8",
-      "Access-Control-Allow-Origin": "*",
-    },
-  };
-
-  try {
-    const response = await fetch(url, options);
-
-    if (!response.ok) {
-      throw new Error(`Response status: ${response.status}`);
-    }
-
-    const json = await response.json();
-    return json;
-  } catch (error) {
-    console.error(error.message);
-  }
-}
+document.addEventListener('DOMContentLoaded', init);

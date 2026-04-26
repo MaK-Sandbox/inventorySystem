@@ -3,98 +3,148 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Inventory_system</title>
-    <script defer src="index.js"></script>
+    <meta name="color-scheme" content="light dark" />
+    <title>Inventory</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <h1>Inventory System Management</h1>
-    <div id="grid-container">
-      <div id="form-block">
-        <h2>Add item to database</h2>
-        <form id="form" action="" method="post">
-          <div id="form-grid">
-            <label for="name">Name:</label>
-            <input id="name" name="name" type="text" placeholder="Desk Chair" />
-            <label for="quantity">Quantity:</label>
-            <input
-              id="quantity"
-              name="quantity"
-              type="number"
-              placeholder="1"
-            />
-            <label for="location_id">Location id:</label>
-            <input
-              id="location_id"
-              name="location_id"
-              type="number"
-              placeholder="1"
-            />
-            <label for="purchase_price">Purchase price:</label>
-            <input
-              id="purchase_price"
-              name="purchase_price"
-              type="number"
-              placeholder="50"
-            />
-            <label for="currency_id">Currency id:</label>
-            <input
-              id="currency_id"
-              name="currency_id"
-              type="number"
-              placeholder="1"
-            />
-            <label for="purchase_date">Purchase date:</label>
-            <input
-              id="purchase_date"
-              name="purchase_date"
-              type="text"
-              placeholder="2025-07-21 10:00:00"
-            />
-            <label for="freeText">Free text:</label>
-            <input
-              id="freeText"
-              name="freeText"
-              type="text"
-              placeholder="optional: add text here"
-            />
-          </div>
-          <div id="button-container">
-            <input type="submit" value="Add item ➕" />
-          </div>
-        </form>
-      </div>
-      <div id="locations-block">
-        <h2>Locations:</h2>
-        <div id="locations-container"></div>
-      </div>
-      <form id="search-bar-block">
-        <label for="select-location_id">Select a location:</label>
-        <select name="select" id="select-location_id" required></select>
-        <label for="search-input">Search input:</label>
-        <div id="search-bar">
-          <i>🔍</i>
-          <input
-            id="search-input"
-            name="search_input"
-            type="text"
-            placeholder="Search..."
-          />
-          <input type="submit" value="Search" />
+
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+            <line x1="12" y1="22.08" x2="12" y2="12"/>
+          </svg>
         </div>
-      </form>
-      <div id="items-block">
-        <h2>Items:</h2>
-        <div id="items-container"></div>
+        <div>
+          <div class="sidebar-title">Inventory</div>
+          <div class="sidebar-subtitle">Home System</div>
+        </div>
       </div>
-      <div id="edit-item-block" class="hide">
-        <h2>Edit item</h2>
-        <div id="edit-item-container"></div>
+
+      <nav class="sidebar-nav">
+        <div id="all-items-nav" class="nav-item active">
+          <svg class="nav-icon" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M1 2.5A1.5 1.5 0 012.5 1h3A1.5 1.5 0 017 2.5v3A1.5 1.5 0 015.5 7h-3A1.5 1.5 0 011 5.5v-3zm8 0A1.5 1.5 0 0110.5 1h3A1.5 1.5 0 0115 2.5v3A1.5 1.5 0 0113.5 7h-3A1.5 1.5 0 019 5.5v-3zm-8 8A1.5 1.5 0 012.5 9h3A1.5 1.5 0 017 10.5v3A1.5 1.5 0 015.5 15h-3A1.5 1.5 0 011 13.5v-3zm8 0A1.5 1.5 0 0110.5 9h3a1.5 1.5 0 011.5 1.5v3a1.5 1.5 0 01-1.5 1.5h-3A1.5 1.5 0 019 13.5v-3z"/>
+          </svg>
+          All Items
+        </div>
+
+        <div class="nav-section-label">Locations</div>
+        <ul id="location-tree" class="location-tree"></ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="upload.html" class="sidebar-footer-link">
+          <svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14">
+            <path d="M2.5 1.75v11.5c0 .138.112.25.25.25h3.17a.75.75 0 010 1.5H2.75A1.75 1.75 0 011 13.25V1.75C1 .784 1.784 0 2.75 0h8.5C12.216 0 13 .784 13 1.75v1.5a.75.75 0 01-1.5 0v-1.5a.25.25 0 00-.25-.25h-8.5a.25.25 0 00-.25.25z"/>
+            <path d="M11.75 6a.75.75 0 01.75.75v3.69l1.47-1.47a.75.75 0 111.06 1.06l-2.75 2.75a.75.75 0 01-1.06 0l-2.75-2.75a.75.75 0 111.06-1.06l1.47 1.47V6.75a.75.75 0 01.75-.75z"/>
+          </svg>
+          Upload Documents
+        </a>
       </div>
-      <div id="search-results-block" class="hide">
-        <h2>Search results</h2>
-        <div id="search-results-container"></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-title-area">
+          <div id="topbar-title" class="topbar-title">All Items</div>
+          <div id="topbar-count" class="topbar-count"></div>
+        </div>
+        <div class="topbar-actions">
+          <div class="search-wrapper">
+            <svg viewBox="0 0 16 16" fill="currentColor">
+              <path d="M11.742 10.344a6.5 6.5 0 10-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 001.415-1.414l-3.85-3.85a1.007 1.007 0 00-.115-.099zm-5.242 1.156a5.5 5.5 0 110-11 5.5 5.5 0 010 11z"/>
+            </svg>
+            <input id="search-input" class="search-input" type="search" placeholder="Search items…" autocomplete="off" />
+          </div>
+          <button id="add-item-btn" class="btn btn-primary">
+            <svg viewBox="0 0 16 16" fill="currentColor" width="13" height="13">
+              <path d="M8 2a.75.75 0 01.75.75v4.5h4.5a.75.75 0 010 1.5h-4.5v4.5a.75.75 0 01-1.5 0v-4.5h-4.5a.75.75 0 010-1.5h4.5v-4.5A.75.75 0 018 2z"/>
+            </svg>
+            New Item
+          </button>
+        </div>
+      </header>
+
+      <div class="content">
+        <div id="table-card" class="table-card">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Qty</th>
+                <th>Location</th>
+                <th>Price</th>
+                <th>Date</th>
+                <th>Notes</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="items-tbody"></tbody>
+          </table>
+        </div>
+        <div id="empty-state" class="empty-state hide">
+          <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"/>
+          </svg>
+          <div class="empty-title">No items found</div>
+          <div class="empty-sub">Add a new item or adjust your filters.</div>
+        </div>
+      </div>
+    </main>
+
+    <div id="modal-backdrop" class="modal-backdrop hide">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-header">
+          <h3 id="modal-title">Add Item</h3>
+          <button id="modal-close-btn" class="modal-close-btn" aria-label="Close">
+            <svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14">
+              <path d="M3.72 3.72a.75.75 0 011.06 0L8 6.94l3.22-3.22a.75.75 0 111.06 1.06L9.06 8l3.22 3.22a.75.75 0 11-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 01-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 010-1.06z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="f-name">Name <span class="required">*</span></label>
+            <input type="text" id="f-name" placeholder="e.g. Black Couch" autocomplete="off" />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="f-quantity">Quantity <span class="required">*</span></label>
+              <input type="number" id="f-quantity" placeholder="1" min="0" value="1" />
+            </div>
+            <div class="form-group">
+              <label for="f-location">Location</label>
+              <select id="f-location"></select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="f-price">Price (€)</label>
+              <input type="number" id="f-price" placeholder="0" min="0" step="1" />
+            </div>
+            <div class="form-group">
+              <label for="f-date">Purchase Date</label>
+              <input type="date" id="f-date" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="f-notes">Notes</label>
+            <textarea id="f-notes" rows="3" placeholder="Any additional details…"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="modal-cancel-btn" class="btn btn-secondary">Cancel</button>
+          <button id="modal-save-btn" class="btn btn-primary">Save</button>
+        </div>
       </div>
     </div>
+
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="index.js"></script>
   </body>
 </html>
