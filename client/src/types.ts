@@ -20,6 +20,14 @@ export interface LocationNode extends Location {
   children: LocationNode[];
 }
 
+export interface Document {
+  id: number;
+  item_id: number;
+  path: string;
+  name: string;
+  description: string | null;
+}
+
 export interface ToastItem {
   id: number;
   message: string;
