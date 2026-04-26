@@ -36,5 +36,6 @@ export function fmtDate(raw: string | null | undefined): string {
 }
 
 export function fmtPrice(val: number | null | undefined): string {
-  return val != null ? `€${val}` : '—';
+  if (val == null) return '—';
+  return (val / 100).toLocaleString(undefined, { style: 'currency', currency: 'EUR' });
 }

@@ -29,7 +29,7 @@ function initForm(item: Item | null): FormState {
     name: item.name,
     quantity: String(item.quantity ?? 1),
     location_id: item.location_id != null ? String(item.location_id) : '',
-    purchase_price: item.purchase_price != null ? String(item.purchase_price) : '',
+    purchase_price: item.purchase_price != null ? String(item.purchase_price / 100) : '',
     purchase_date: item.purchase_date
       ? item.purchase_date.replace(' ', 'T').split('T')[0]
       : '',
@@ -42,7 +42,7 @@ function toPayload(form: FormState): ItemFormPayload {
     name: form.name.trim(),
     quantity: parseInt(form.quantity) || 0,
     location_id: form.location_id ? parseInt(form.location_id) : null,
-    purchase_price: form.purchase_price !== '' ? parseInt(form.purchase_price) : null,
+    purchase_price: form.purchase_price !== '' ? Math.round(parseFloat(form.purchase_price) * 100) : null,
     purchase_date: form.purchase_date ? `${form.purchase_date} 00:00:00` : null,
     freeText: form.freeText.trim() || null,
     currency_id: 1,
@@ -159,10 +159,10 @@ export function ItemModal({ item, locations, onSave, onClose }: ItemModalProps) 
                 id="f-price"
                 type="number"
                 min="0"
-                step="1"
+                step="0.01"
                 value={form.purchase_price}
                 onChange={set('purchase_price')}
-                placeholder="0"
+                placeholder="0.00"
               />
             </div>
             <div className="form-group">
