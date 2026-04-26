@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
 import fileUpload from "express-fileupload";
+import { fileURLToPath } from "url";
+import path from "path";
 
 // Initialize Express app
 const app = express();
@@ -15,7 +17,8 @@ if (process.env.NODE_ENV === "development") {
 
 // Use JSON middleware
 app.use(express.json());
-app.use(express.static("dist/public"));
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 app.use(fileUpload());
 
