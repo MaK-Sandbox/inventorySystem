@@ -3,6 +3,9 @@
 
 *.sqlite
 backup/*
+built/
+dist/
+public/
 
 ### Android ###
 # Gradle files

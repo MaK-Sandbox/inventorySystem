@@ -7,10 +7,11 @@
     "backup": "cp inventory.sqlite inventory_backup.sqlite",
     "migrate_all": "bash utils/migration.sh",
     "seed": "node --env-file=.env seeding/2025-07-11-data.js",
-    "devStart": "node --env-file=.env ./built/server.js",
-    "client:dev": "npm run dev --prefix client",
-    "client:build": "npm run build --prefix client",
-    "dev": "concurrently -n api,ui -c blue,green \"npm run devStart\" \"npm run client:dev\""
+    "server:dev": "tsc-watch --onSuccess \"node --env-file=.env dist/server.js\"",
+    "client:dev": "npm run dev --prefix src/client",
+    "client:build": "npm run build --prefix src/client",
+    "dev": "concurrently -n api,ui -c blue,green \"npm run server:dev\" \"npm run client:dev\"",
+    "build": "tsc && npm run client:build"
   },
   "repository": {
     "type": "git",
@@ -38,6 +39,7 @@
     "@types/express": "^5.0.3",
     "@types/express-fileupload": "^1.5.1",
     "concurrently": "^9.2.1",
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "tsc-watch": "^7.2.0"
   }
 }

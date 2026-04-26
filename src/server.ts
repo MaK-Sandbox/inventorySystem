@@ -15,7 +15,7 @@ if (process.env.NODE_ENV === "development") {
 
 // Use JSON middleware
 app.use(express.json());
-app.use(express.static("public"));
+app.use(express.static("dist/public"));
 app.use(cors());
 app.use(fileUpload());
 

@@ -11,8 +11,7 @@ export default defineConfig({
     },
   },
   build: {
-    // Builds straight into the folder Express already serves statically
-    outDir: '../public',
+    outDir: '../../dist/public',
     emptyOutDir: true,
   },
 });
