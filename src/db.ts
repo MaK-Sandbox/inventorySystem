@@ -5,11 +5,7 @@ if (!process.env.DB_FILE) {
   process.exit(1);
 }
 
-let db: Database.Database | undefined;
-
-if (!db) {
-  db = new Database(process.env.DB_FILE);
-  db.pragma("foreign_keys = ON");
-}
+const db = new Database(process.env.DB_FILE);
+db.pragma("foreign_keys = ON");
 
 export default db;
